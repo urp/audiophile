@@ -1,0 +1,39 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e)
+
+[CMake]
+Build Directory Count=1
+Current Build Directory Index=0
+ProjectRootRelative=./
+
+[CMake][CMake Build Directory 0]
+Build Directory Path=file:///home/urp/Documents/cpp-vorlesung2014/audiophile/build
+Build Type=Debug
+CMake Binary=file:///usr/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=file:///usr/local
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=audiophile
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e)
+Dependency Action=Build
+EnvironmentGroup=default
+Executable=file:///home/urp/Documents/cpp-vorlesung2014/audiophile/
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=audiophile,audiophile
+Use External Terminal=false
+Working Directory=
+isExecutable=false
+
+[Project]
+VersionControlSupport=kdevgit
