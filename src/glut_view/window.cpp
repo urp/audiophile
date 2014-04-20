@@ -152,10 +152,10 @@ void Window::glutKeyboard(unsigned char glut_key, int mouse_x, int mouse_y)
     case 'm': ev.key = event_type::KEY_M; break;
 
     // key above tab case '': ev.key = event_type::KEY_; break;
-    case '°': ev.key = event_type::KEY_DEGREE; break;
+    //case '°': ev.key = event_type::KEY_DEGREE; break;
     case '!': ev.key = event_type::KEY_EXCLAMATION_MARK; break;
     case '\"': ev.key = event_type::KEY_BACKSLASH; break;
-    case '§': ev.key = event_type::KEY_PARAGRAPH; break;
+    //case '§': ev.key = event_type::KEY_PARAGRAPH; break;
     case '$': ev.key = event_type::KEY_DOLLAR; break;
     case '%': ev.key = event_type::KEY_PERCENT; break;
     case '&': ev.key = event_type::KEY_AND; break;
