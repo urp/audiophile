@@ -10,12 +10,12 @@ Engine::Engine( const std::shared_ptr< audiophile::model::Game >& g )
 }
 
 
-void Engine::addView( const std::shared_ptr< audiophile::glut_view::Window >& v )
+void Engine::addView( const std::shared_ptr< audiophile::view::GLUTWindow >& v )
 {
   _views.push_back( v );
 }
 
-const std::vector< std::shared_ptr< audiophile::glut_view::Window > >& Engine::views() const
+const std::vector< std::shared_ptr< audiophile::view::GLUTWindow > >& Engine::views() const
 {
   return _views;
 }

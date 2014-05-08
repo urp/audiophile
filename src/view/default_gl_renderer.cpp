@@ -1,8 +1,6 @@
-# include "glut_view/default_renderer.hpp"
+# include "view/default_gl_renderer.hpp"
 
-# include "glut_view/window.hpp"
-//# include "glut_view/default_drawable.hpp"
-
+# include "view/glut_window.hpp"
 
 # include "model/default_game_object.hpp"
 
@@ -10,21 +8,21 @@
 # include <GL/glu.h>
 # include <GL/freeglut.h>
 
-using namespace audiophile::glut_view;
+using namespace audiophile::view;
 
-DefaultRenderer::DefaultRenderer( const std::shared_ptr< const model::Game >& g, const std::string& name )
-: Renderer( g, name )
+DefaultGLRenderer::DefaultGLRenderer( const std::shared_ptr< const model::Game >& g, const std::string& name )
+: GLRenderer( g, name )
 {
-  _drawable_factory.register_module< model::DefaultGameObject>( []( const std::shared_ptr< model::GameObject >& p ) { return std::make_shared< DefaultDrawable >( p ); } );
+  _drawable_factory.register_module< model::DefaultGameObject>( []( const std::shared_ptr< model::GameObject >& p ) { return std::make_shared< DefaultGLDrawable >( p ); } );
 }
 
-void DefaultRenderer::glInitialize( Window& win )
+void DefaultGLRenderer::initialize( GLUTWindow& win )
 {
-  glResize( win );
-  glDraw( win );
+  resize( win );
+  draw( win );
 }
 
-void DefaultRenderer::glDraw( Window& w )
+void DefaultGLRenderer::draw( GLUTWindow& w )
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
@@ -36,7 +34,7 @@ void DefaultRenderer::glDraw( Window& w )
   glutSwapBuffers(); //Send the 3D scene to the screen
 }
 
-void DefaultRenderer::glResize( Window& win ) 
+void DefaultGLRenderer::resize( GLUTWindow& win ) 
 {
   glViewport( 0,0, win.width(), win.height() );
   glMatrixMode(GL_PROJECTION); //Switch to setting the camera perspective

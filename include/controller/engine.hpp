@@ -3,7 +3,7 @@
 
 # include "model/game.hpp"
 # include "controller/input_event_handler.hpp"
-# include "glut_view/window.hpp"
+# include "view/glut_window.hpp"
 
 # include <chrono>
 
@@ -24,12 +24,12 @@ namespace audiophile
         std::shared_ptr< const model::Game > game_model() const;
 
       protected:
-        void addView( const std::shared_ptr< glut_view::Window >& );
-        const std::vector< std::shared_ptr< glut_view::Window > >& views() const;
+        void addView( const std::shared_ptr< view::GLUTWindow >& );
+        const std::vector< std::shared_ptr< view::GLUTWindow > >& views() const;
 
       private:
         std::shared_ptr< model::Game > _game_model;
-        std::vector< std::shared_ptr< glut_view::Window > > _views;
+        std::vector< std::shared_ptr< view::GLUTWindow > > _views;
     };
 
   } // controller::

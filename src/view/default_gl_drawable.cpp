@@ -1,16 +1,16 @@
-# include "glut_view/default_drawable.hpp"
+# include "view/default_gl_drawable.hpp"
 
 # include <GL/gl.h>
 # include <GL/glu.h>
 
-using namespace audiophile::glut_view;
+using namespace audiophile::view;
 
-DefaultDrawable::DefaultDrawable(const std::shared_ptr< model::GameObject >& o )
+DefaultGLDrawable::DefaultGLDrawable( const std::shared_ptr< model::GameObject >& o )
 : _model( o )
 {}
 
 
-void DefaultDrawable::glDraw(Renderer&, Window&)
+void DefaultGLDrawable::glDraw( GLRenderer&, GLUTWindow& )
 {
   std::clog << "Hi from DefaultDrawable::glDraw." << std::endl; 
   //Clear information from last draw

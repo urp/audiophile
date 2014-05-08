@@ -12,7 +12,7 @@ namespace audiophile
     class DefaultEngine : public Engine, public std::enable_shared_from_this< DefaultEngine >
     {
       public:
-        DefaultEngine( const std::shared_ptr< model::Game >& = std::shared_ptr< model::Game >( new model::Game ) );
+        DefaultEngine();
 
         virtual void init( int&, char** ) override;
         virtual void run() override;

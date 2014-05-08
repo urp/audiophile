@@ -24,10 +24,10 @@ namespace audiophile
           virtual ~Metadata(){};
           std::type_info extension_type;
         };
-        
+
         // TODO: virtual functiona
         template< typename ExtensionType >
-        void registerMetadataType();
+        void registerMetadataType( const std::shared_ptr< Metadata >& );
 
         template< typename ExtensionType >
         std::shared_ptr< Metadata > getMetadata();
@@ -49,10 +49,13 @@ namespace audiophile
 // implementation //
 
 template< typename ExtensionType >
-void audiophile::model::GameObject::registerMetadataType()
+void audiophile::model::GameObject::registerMetadataType( const std::shared_ptr< Metadata >& m )
 {
   if( _metadata.find( typeid( ExtensionType ) ) == _metadata.end() )
-    _metadata.insert( { typeid( ExtensionType ), std::make_shared< Metadata >() } );
+    _metadata.insert( { typeid( ExtensionType ), m } );
+  else
+    if( typeid( _metadata[ typeid( ExtensionType ) ] ) != typeid( m ) )
+      throw std::logic_error( "GameObject::registerMetadataType: Metadata for same key but with different type was already added." );
 }
 
 template< typename ExtensionType >

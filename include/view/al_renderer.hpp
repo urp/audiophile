@@ -6,22 +6,19 @@
 
 namespace audiophile
 {
-  namespace glut_view 
+  namespace view 
   {
-    class Window;
-
-    class Renderer
+    class ALRenderer
     {
       public:
-        Renderer() = delete;
-        Renderer( const std::shared_ptr< const model::Game >&, std::string name );
+        ALRenderer() = delete;
+        ALRenderer( const std::shared_ptr< const model::Game >&, std::string name = "ALRenderer" );
 
         std::shared_ptr< const model::Game > game_model() const;
         std::string name() const;
 
-        virtual void glInitialize( Window& ) = 0;
-        virtual void glDraw( Window& ) = 0;
-        virtual void glResize( Window& ) = 0;
+        virtual void play( ALContext& ) = 0;
+
       private:
 
         std::string _name;
@@ -29,5 +26,5 @@ namespace audiophile
 
     }; // Renderer
 
-  } // glut_view::
+  } // view::
 } // audiophile::
