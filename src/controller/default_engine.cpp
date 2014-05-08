@@ -22,7 +22,7 @@ void DefaultEngine::init( int& argc, char** argv )
 
 void DefaultEngine::run()
 {
-  std::shared_ptr< glut_view::Window > window( new glut_view::Window( 500,500, "audiophile", shared_from_this() ) );
+  std::shared_ptr< glut_view::Window > window( new glut_view::Window( "audiophile", 500,500, std::make_shared< glut_view::DefaultRenderer >( game_model() ), shared_from_this() ) );
 
   addView( window );
 

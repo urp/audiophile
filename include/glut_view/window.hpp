@@ -1,5 +1,6 @@
 # pragma once
 
+# include "glut_view/renderer.hpp"
 # include "controller/input_event_handler.hpp"
 
 # include <memory>
@@ -16,7 +17,7 @@ namespace audiophile
     {
       public:
 
-        Window( size_t width, size_t height, const std::string& name, const std::shared_ptr< controller::InputEventHandler >& );
+        Window( const std::string& name, size_t width, size_t height, const std::shared_ptr< Renderer >&, const std::shared_ptr< controller::InputEventHandler >& );
         ~Window();
 
         unsigned int width() const;

@@ -1,6 +1,5 @@
 # include "glut_view/window.hpp"
 
-# include "glut_view/renderer.hpp"
 
 # include <GL/freeglut.h>
 //# include <GL/freeglut_ext.h>
@@ -9,10 +8,11 @@
 
 using namespace audiophile::glut_view;
 
-Window::Window( size_t width, size_t height, const std::string& name, const std::shared_ptr< controller::InputEventHandler >& h )
+Window::Window( const std::string& name, size_t width, size_t height, const std::shared_ptr< Renderer >& r, const std::shared_ptr< controller::InputEventHandler >& h )
 : _name( name )
 , _width( width )
 , _height( height )
+, _renderer( r )
 , _input_event_handler( h )
 {
   // GLUT Window Initialization:
