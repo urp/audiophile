@@ -1,8 +1,8 @@
 # pragma once
 
-# include "view/gl_drawable.hpp"
+# include "view/gl_renderer.hpp"
 
-# include "model/game_object.hpp"
+# include "model/default_game_object.hpp"
 
 # include <iostream>
 
@@ -10,7 +10,7 @@ namespace audiophile
 {
   namespace view
   {
-    class DefaultGLDrawable : public GLDrawable
+    class DefaultGLDrawable : public GLRenderer::Drawable
     {
       public:
 
@@ -19,7 +19,7 @@ namespace audiophile
         virtual void glDraw( GLRenderer&, GLUTWindow& ) override;
 
       private:
-        std::shared_ptr< model::GameObject > _model;
+        std::shared_ptr< model::DefaultGameObject > _model;
     };
   }
 }

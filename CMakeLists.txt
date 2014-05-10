@@ -6,6 +6,9 @@ include_directories( include )
 
 add_definitions( "--std=c++11" )
 
+# look for Cmake modules in project directory
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
+
 #########################################################
 # FIND OPENGL
 #########################################################
@@ -13,9 +16,6 @@ find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
 link_directories(${OpenGL_LIBRARY_DIRS})
 add_definitions(${OpenGL_DEFINITIONS})
-if(NOT OPENGL_FOUND)
-message(ERROR " OPENGL not found!")
-endif(NOT OPENGL_FOUND)
 
 #########################################################
 # FIND GLUT
@@ -24,11 +24,7 @@ find_package(GLUT REQUIRED)
 include_directories(${GLUT_INCLUDE_DIRS})
 link_directories(${GLUT_LIBRARY_DIRS})
 add_definitions(${GLUT_DEFINITIONS})
-if(NOT GLUT_FOUND)
-message(ERROR " GLUT not found!")
-endif(NOT GLUT_FOUND)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
 
 #########################################################
 # FIND OPENAL
@@ -37,9 +33,6 @@ find_package(OpenAL REQUIRED)
 include_directories(${OPENAL_INCLUDE_DIRS})
 link_directories(${OPENAL_LIBRARY_DIRS})
 add_definitions(${OPENAL_DEFINITIONS})
-if(NOT OPENAL_FOUND)
-message(ERROR " ALUT not found!")
-endif(NOT OPENAL_FOUND)
 
 #########################################################
 # FIND ALUT
@@ -61,17 +54,20 @@ add_executable( audiophile src/main.cpp
                            src/model/game_object.cpp
                            # controller
                            src/controller/engine.cpp
+                           src/controller/glut_engine.cpp
+                           src/controller/logic.cpp
+                           src/controller/default_logic.cpp
+                           src/controller/default_object_logic.cpp 
                            # view
-                           src/view/window.cpp
+                           src/view/glut_window.cpp
                            src/view/gl_renderer.cpp
-                           # default game
-                           src/model/default_game_object.cpp
-                           src/controller/default_engine.cpp
                            src/view/default_gl_renderer.cpp
                            src/view/default_gl_drawable.cpp
+                           # default game
+                           src/model/default_game_object.cpp
+
               )
 
-# create the program "test"
 target_link_libraries( audiophile ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${OPENAL_LIBRARY} ${ALUT_LIBRARY} )
 
 install(TARGETS audiophile RUNTIME DESTINATION bin)

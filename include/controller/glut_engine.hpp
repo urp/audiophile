@@ -9,21 +9,16 @@ namespace audiophile
   namespace controller 
   {
 
-    class DefaultEngine : public Engine, public std::enable_shared_from_this< DefaultEngine >
+    class GlutEngine : public Engine, public std::enable_shared_from_this< GlutEngine >
     {
       public:
-        DefaultEngine();
+        GlutEngine( const std::shared_ptr< Logic >& );
 
         virtual void init( int&, char** ) override;
         virtual void run() override;
 
       protected:
         virtual bool handleKeyboardEvent( const InputEventHandler::keyboard_event& ) override;
-
-        static void glutIdle();
-
-      private:
-        std::chrono::system_clock::time_point _current_time;
     };
 
   } // controller::

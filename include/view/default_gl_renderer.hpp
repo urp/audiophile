@@ -3,7 +3,7 @@
 # include "view/gl_renderer.hpp"
 # include "view/default_gl_drawable.hpp"
 
-# include "factory.hpp"
+# include "factory_map.hpp"
 
 namespace audiophile
 {

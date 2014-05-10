@@ -1,13 +1,13 @@
 # include "model/default_game_object.hpp"
 
+# include <chrono>
+
 using namespace audiophile::model;
 
 
 DefaultGameObject::DefaultGameObject( const std::string& n )
-: GameObject( n )
+: GameObject( true, n )
 {
-
-  
 
 }
 
@@ -20,4 +20,3 @@ audiophile::box< audiophile::distance_type, 2 > DefaultGameObject::getBoundingBo
 {
 
 }
-

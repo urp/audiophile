@@ -13,6 +13,12 @@ namespace audiophile
     class GLRenderer
     {
       public:
+        class Drawable
+        {
+          public:
+            virtual void glDraw( GLRenderer&, GLUTWindow& ) = 0;
+        };
+
         GLRenderer() = delete;
         GLRenderer( const std::shared_ptr< const model::Game >&, std::string name );
 
