@@ -6,41 +6,21 @@
 using namespace ::flappy_box::view;
 
 
-BoxGlDrawable::BoxGlDrawable(const std::shared_ptr< ::model::GameObject >& o )
-: _model( std::dynamic_pointer_cast< model::Box >( o ) )
-{
-  if( not _model )
-    throw std::logic_error( "BoxGlDrawable::BoxGlDrawable: GameObject is no flappy_box::model::Box." );
-}
+BoxGlDrawable::BoxGlDrawable(const std::shared_ptr< model::Box >& b )
+: _model( b )
+{}
 
 
 void BoxGlDrawable::glDraw( ::view::GlRenderer&, ::view::GlutWindow& )
 {
-  std::clog << "Hi from BoxGlDrawable::glDraw." << std::endl; 
-  //Clear information from last draw
-//   glBegin(GL_QUADS); //Begin quadrilateral coordinates
-//   //Trapezoid
-//   glVertex3f(-0.7f, -1.5f, -5.0f);
-//   glVertex3f(0.7f, -1.5f, -5.0f);
-//   glVertex3f(0.7f, -0.5f, -5.0f);
-//   glVertex3f(-0.7f, -0.5f, -5.0f);
-//   glEnd(); //End quadrilateral coordinates
-//   glBegin(GL_TRIANGLES); //Begin triangle coordinates
-//   //Triangle
-//   glVertex3f(-0.5f, 0.5f, -5.0f);
-//   glVertex3f(-1.0f, 1.5f, -5.0f);
-//   glVertex3f(-1.5f, 0.5f, -5.0f);
-//   glEnd(); //End triangle coordinates
+  std::clog << "flappy_box::view::BoxGlDrawable::glDraw: Hi." << std::endl; 
 
-  glClearColor( 0.1, 0.2, 0.3, 1.);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  gluLookAt( 0,-7,0, 0,0,0, 0,0,1 );
+  glPushMatrix();
   {
     std::chrono::milliseconds rotation_interval( 5000 );
     double angle = _model->angle();
-
+    const vec3_type pos = _model->position();
+    glTranslated( pos[0], pos[1], pos[2] );
     glRotated( angle, 0., 0., 1. );
     glColor3f( .5,.5,.5 );
 
@@ -63,4 +43,5 @@ void BoxGlDrawable::glDraw( ::view::GlRenderer&, ::view::GlutWindow& )
     glDrawElements( GL_LINES, 6, GL_UNSIGNED_SHORT, idx_wire_lines );
     glDisableClientState( GL_VERTEX_ARRAY );
   }
+  glPopMatrix();
 }

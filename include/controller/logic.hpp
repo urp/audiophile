@@ -11,10 +11,8 @@ namespace controller
     public:
       struct ObjectLogic : public model::GameObject::Data
       {
-        // Handle keyboard_event. Returns true if event has been handled.
-        virtual bool handle( const InputEventHandler::keyboard_event& ) { return false; };
-        // Advance Game.
-        virtual void advance( Logic& ) = 0;
+        // Advance Game and handle keyboard_event. Returns true if event has been handled.
+        virtual bool advance( Logic&, const InputEventHandler::keyboard_event& ) = 0;
       };
 
       typedef factory_map< model::GameObject, ObjectLogic > factory_type;
@@ -23,7 +21,7 @@ namespace controller
       Logic( const std::shared_ptr< model::Game >& );
 
       virtual bool handle( const controller::InputEventHandler::keyboard_event& );
-      virtual void advance();
+      virtual bool advance( const controller::InputEventHandler::keyboard_event& = controller::InputEventHandler::keyboard_event() );
 
       std::shared_ptr< model::Game >       game_model()       { return _model; }
       std::shared_ptr< model::Game const > game_model() const { return _model; } 

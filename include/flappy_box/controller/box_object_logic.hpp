@@ -12,10 +12,9 @@ namespace flappy_box
     {
       public:
         BoxObjectLogic() = delete;
-        BoxObjectLogic( const std::shared_ptr< ::model::GameObject >& );
+        BoxObjectLogic( const std::shared_ptr< model::Box >& );
 
-        virtual bool handle( const ::controller::InputEventHandler::keyboard_event& ) override;
-        virtual void advance( ::controller::Logic& ) override;
+        virtual bool advance( ::controller::Logic&, ::controller::InputEventHandler::keyboard_event const & ) override;
 
       private:
         std::shared_ptr< model::Box > _model;

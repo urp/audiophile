@@ -6,15 +6,28 @@
 template< typename In, typename Out >
 class factory_map
 {
-    typedef std::function< std::shared_ptr< Out > ( const std::shared_ptr< In >& ) > module_function_type;
+    typedef std::function< std::shared_ptr< Out > ( const std::shared_ptr< In >& ) > outer_function_type;
 
   public:
 
     // Register factory module for key/input type T.
     template< typename T >
-    void register_module( const module_function_type& f )
+    void register_module( const std::function< std::shared_ptr< Out > ( const std::shared_ptr< T >& ) >& inner_function )
     {
-      auto ins_result = _modules.insert( { typeid( T ), f } );
+      auto outer_function = [inner_function]( const std::shared_ptr< In >& in ) -> std::shared_ptr< Out >
+                            { 
+                              auto derived_in = std::dynamic_pointer_cast< T >( in );
+                              if( not derived_in ) 
+                                throw std::logic_error( "factory::register_module::outer_function: Cannot cast argument of type " 
+                                                      +  std::string( typeid( In ).name() )
+                                                      + " to type "
+                                                      +  std::string( typeid( T ).name() )
+                                                      + "."
+                                                      );
+                              return inner_function( derived_in );
+                            };
+
+      auto ins_result = _modules.insert( { typeid( T ), outer_function } );
       if( not ins_result.second )
         throw std::logic_error( "factory::register_module: A module with key " + std::string( typeid( T ).name() ) + " is already registered." );
     }
@@ -29,6 +42,6 @@ class factory_map
     }
 
   private:
-    std::map< std::type_index, module_function_type > _modules;
+    std::map< std::type_index, outer_function_type > _modules;
 
 }; // factory_map

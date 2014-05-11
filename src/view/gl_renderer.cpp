@@ -30,9 +30,11 @@ void GlRenderer::initialize( GlutWindow& win )
 
 void GlRenderer::draw( GlutWindow& w )
 {
+  glClearColor( 0.1, 0.2, 0.3, 1.);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
-  glLoadIdentity(); //Reset the drawing perspective
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  gluLookAt( 0,-7,0, 0,0,0, 0,0,1 );
 
   for( auto obj : this->game_model()->objects() )
     _drawable_factory.create_for( obj )->glDraw( *this, w );

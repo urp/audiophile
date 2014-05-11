@@ -21,11 +21,10 @@ void FlappyEngine::init( int& argc, char** argv )
 {
   GlutEngine::init( argc, argv );
 
-  gl_renderer()->drawable_factory().register_module< model::Box >( []( const std::shared_ptr< ::model::GameObject >& p ) { return std::make_shared< view::BoxGlDrawable >( p ); } );
-
   game_model()->addGameObject( std::make_shared< model::Box >() );
-  game_logic()->logic_factory().register_module< model::Box >( []( const std::shared_ptr< ::model::GameObject >& p ) { return std::make_shared< BoxObjectLogic >( p ); } );
 
+  game_logic()->logic_factory().register_module< model::Box >( []( const std::shared_ptr< model::Box >& b ) { return std::make_shared< BoxObjectLogic >( b ); } );
+  gl_renderer()->drawable_factory().register_module< model::Box >( []( const std::shared_ptr< model::Box >& b ) { return std::make_shared< view::BoxGlDrawable >( b ); } );
 }
 
 
