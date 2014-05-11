@@ -27,13 +27,22 @@ namespace view
       };
 
       struct Audible : public ::model::GameObject::Data
+      {
+        virtual void auralize() = 0;
+      };
+
+      typedef factory_map< model::GameObject, Audible > delegate_factory_type;
 
       AlRenderer() = delete;
       AlRenderer( const std::shared_ptr< const model::Game >& );
 
       std::shared_ptr< const model::Game > game_model() const;
 
-      void auralize_model();
+      /// Return factory creating Audible delegates.
+      delegate_factory_type&       audible_factory()       { return _audible_factory; }
+      delegate_factory_type const& audible_factory() const { return _audible_factory; }
+
+      void auralize();
 
     private:
       std::string _name;
@@ -41,6 +50,7 @@ namespace view
 
       std::map< std::string, Buffer > _cached_buffers;
 
+      delegate_factory_type _audible_factory;
   }; // AlRenderer
 
 } // view::

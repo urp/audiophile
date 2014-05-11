@@ -15,7 +15,7 @@ namespace controller
         virtual bool advance( Logic&, const InputEventHandler::keyboard_event& ) = 0;
       };
 
-      typedef factory_map< model::GameObject, ObjectLogic > factory_type;
+      typedef factory_map< model::GameObject, ObjectLogic > delegate_factory_type;
 
       Logic() = delete;
       Logic( const std::shared_ptr< model::Game >& );
@@ -26,12 +26,13 @@ namespace controller
       std::shared_ptr< model::Game >       game_model()       { return _model; }
       std::shared_ptr< model::Game const > game_model() const { return _model; } 
 
-      factory_type&       logic_factory()       { return _obj_logic_factory; }
-      factory_type const& logic_factory() const { return _obj_logic_factory; }
+      /// Return factory creating ObjectLogic delegates.
+      delegate_factory_type&       logic_factory()       { return _obj_logic_factory; }
+      delegate_factory_type const& logic_factory() const { return _obj_logic_factory; }
 
     protected:
       std::shared_ptr< model::Game > _model;
-      factory_type _obj_logic_factory;
+      delegate_factory_type _obj_logic_factory;
 
   }; // Logic
 
