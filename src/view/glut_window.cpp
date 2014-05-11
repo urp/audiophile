@@ -18,9 +18,9 @@ GlutWindow::GlutWindow( const std::string& name, size_t width, size_t height, co
   glutInitWindowSize( width, height);
   glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
-  _glut_win_id = glutCreateWindow( "audiophile" );
+  _glut_win_id = glutCreateWindow( name.c_str() );
   if( _glut_win_id < 1 ) 
-    throw std::logic_error( "view::GlutWindow::GlutWindow: Could not create GLUT window." );
+    throw std::logic_error( "::view::GlutWindow::GlutWindow: Could not create GLUT window." );
 
   glutSetWindowData( this );
 

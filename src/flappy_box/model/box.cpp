@@ -8,12 +8,12 @@ Box::Box( const std::string& n )
 
 }
 
-::sphere< ::distance_type, 2 > Box::getBoundingSphere() const
-{
-
-}
-
-::box< ::distance_type, 2 > Box::getBoundingBox() const
-{
-
-}
+// ::sphere< ::distance_type, 2 > Box::getBoundingSphere() const
+// {
+// 
+// }
+// 
+// ::box< ::distance_type, 2 > Box::getBoundingBox() const
+// {
+// 
+// }

@@ -11,10 +11,10 @@ namespace flappy_box
     {
       public:
 
-        Box(const std::string& = "untitled DefaultGameObject");
+        Box(const std::string& = "Box");
 
-        virtual sphere< distance_type, 2 > getBoundingSphere() const override;
-        virtual box< distance_type, 2 >    getBoundingBox()    const override;
+//         virtual sphere< distance_type, 2 > getBoundingSphere() const override;
+//         virtual box< distance_type, 2 >    getBoundingBox()    const override;
 
         const double& angle() const { return _angle; }
         void setAngle( double a ) { _angle = a; }
