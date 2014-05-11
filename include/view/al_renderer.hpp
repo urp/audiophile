@@ -26,6 +26,8 @@ namespace view
         vec3_type m_velocity;
       };
 
+      struct Audible : public ::model::GameObject::Data
+
       AlRenderer() = delete;
       AlRenderer( const std::shared_ptr< const model::Game >& );
 
@@ -38,7 +40,8 @@ namespace view
       std::shared_ptr< const model::Game > _game_model;
 
       std::map< std::string, Buffer > _cached_buffers;
-  }; // Renderer
+
+  }; // AlRenderer
 
 } // view::
 

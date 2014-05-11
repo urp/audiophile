@@ -90,6 +90,7 @@ namespace controller
 
       // Return true if event was handled.
       virtual bool handle( const keyboard_event& ) = 0;
-  };
+
+  }; // InputEventHandler
 
 } // controller::

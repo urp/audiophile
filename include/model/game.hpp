@@ -13,7 +13,7 @@ namespace model
   {
     public:
 
-      Game() : timestamp( std::chrono::steady_clock::now() ) 
+      Game() : _timestamp( std::chrono::steady_clock::now() )
       { }
 
       void addGameObject( const std::shared_ptr< GameObject >& o )
@@ -23,11 +23,20 @@ namespace model
       }
       const std::vector< std::shared_ptr< GameObject > >&  objects() const { return _objects; }
 
-      std::chrono::steady_clock::time_point timestamp;
-      std::chrono::duration< double >  timestep;
+      void setTimestamp( std::chrono::steady_clock::time_point const& t )
+      {
+        auto last_timestamp = timestamp();
+        _timestamp = std::chrono::steady_clock::now();
+        _timestep = t - last_timestamp;
+      }
+
+      std::chrono::steady_clock::time_point const& timestamp() const { return _timestamp; }
+      std::chrono::duration< double > const&       timestep() const { return _timestep; }
 
   private:
     std::vector< std::shared_ptr< GameObject > > _objects;
+    std::chrono::steady_clock::time_point        _timestamp;
+    std::chrono::duration< double >              _timestep;
   }; // Game
 
 } // model::

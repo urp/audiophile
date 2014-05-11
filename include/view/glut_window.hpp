@@ -45,6 +45,7 @@ namespace view
       std::shared_ptr< GlRenderer > _renderer;
 
       std::shared_ptr< controller::InputEventHandler > _input_event_handler;
+
   }; // GlutWindow
 
 } // view::

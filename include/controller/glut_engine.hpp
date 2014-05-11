@@ -16,6 +16,7 @@ namespace controller
       virtual void run() override;
 
       const unsigned int _prefered_timestep_millisec = 30;
-  };
+
+  }; // GlutEngine
 
 } // controller::

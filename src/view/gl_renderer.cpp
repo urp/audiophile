@@ -35,11 +35,11 @@ void GlRenderer::draw( GlutWindow& w )
     if( not drawable )
     {
       std::clog << "::view::GlRenderer::draw: Adding new Drawable for \"" << o->name() << "\"." << std::endl;
-      o->registerDataType( _drawable_factory.create_for( o ) );
-      drawable = o->getData< Drawable >();
+      drawable = _drawable_factory.create_for( o );
+      o->registerDataType( drawable );
     }
 
-    drawable->visualize( *this, w );
+    if( drawable ) drawable->visualize( *this, w );
   }
 
   glutSwapBuffers(); 

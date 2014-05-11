@@ -32,6 +32,7 @@ namespace controller
     protected:
       std::shared_ptr< model::Game > _model;
       factory_type _obj_logic_factory;
-  };
 
-};
+  }; // Logic
+
+}; // controller::

@@ -13,11 +13,9 @@ bool Logic::handle( const InputEventHandler::keyboard_event& ev )
 
 bool Logic::advance( const ::controller::InputEventHandler::keyboard_event& ev )
 {
-  auto last_timestamp = game_model()->timestamp;
-  game_model()->timestamp =  std::chrono::steady_clock::now();
-  game_model()->timestep  =  game_model()->timestamp - last_timestamp;
+  game_model()->setTimestamp( std::chrono::steady_clock::now() );
 
-  std::clog << "::controller::Logic::advance: timestep " << std::chrono::duration_cast< std::chrono::milliseconds >( game_model()->timestep ).count() << '.' << std::endl;
+  std::clog << "::controller::Logic::advance: timestep " << std::chrono::duration_cast< std::chrono::milliseconds >( game_model()->timestep() ).count() << '.' << std::endl;
 
   for( auto o : game_model()->objects() )
   {
@@ -27,11 +25,13 @@ bool Logic::advance( const ::controller::InputEventHandler::keyboard_event& ev )
       if( not obj_logic )
       {
         std::clog << "::controller::Logic::advance: Adding new ObjectLogic for \"" << o->name() << "\"." << std::endl;
-        o->registerDataType( _obj_logic_factory.create_for( o ) );
-        obj_logic = o->getData< ObjectLogic >();
+        obj_logic = _obj_logic_factory.create_for( o );
+        o->registerDataType( obj_logic );
       }
 
-      if( obj_logic->advance( *this, ev ) ) return true;
+      if( obj_logic and obj_logic->advance( *this, ev ) ) return true;
     }
   }
+
+  return false;
 }

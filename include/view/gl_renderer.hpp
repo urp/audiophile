@@ -34,8 +34,8 @@ namespace view
     private:
       std::shared_ptr< const model::Game > _game_model;
       factory_type _drawable_factory;
- 
-  }; // Renderer
+
+  }; // GlRenderer
 
 } // view::
 

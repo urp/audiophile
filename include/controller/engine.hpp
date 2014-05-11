@@ -30,6 +30,7 @@ namespace controller
     private:
       std::shared_ptr< model::Game > _model;
       std::shared_ptr< Logic >       _logic;
-  };
+
+  }; // Engine
 
 } // controller::

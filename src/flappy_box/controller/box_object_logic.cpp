@@ -13,10 +13,10 @@ bool BoxObjectLogic::advance( ::controller::Logic& l, ::controller::InputEventHa
 {
   const std::chrono::milliseconds rotation_interval( 5000 );
 
-  double new_angle = 360. * ( std::chrono::duration_cast<std::chrono::milliseconds>( l.game_model()->timestamp.time_since_epoch() ) % rotation_interval ).count() / double( rotation_interval.count() );  
+  double new_angle = 360. * ( std::chrono::duration_cast<std::chrono::milliseconds>( l.game_model()->timestamp().time_since_epoch() ) % rotation_interval ).count() / double( rotation_interval.count() );  
   _model->setAngle( new_angle );
 
-  double timestep_sec = l.game_model()->timestep.count();
+  double timestep_sec = l.game_model()->timestep().count();
   const vec3_type gravity( 0.,0., -2. );
   static vec3_type flapping( 0.,0., 0.0 );
 
