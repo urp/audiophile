@@ -27,10 +27,9 @@ namespace view
       };
 
       AlRenderer() = delete;
-      AlRenderer( const std::shared_ptr< const model::Game >&, std::string name = "AlRenderer" );
+      AlRenderer( const std::shared_ptr< const model::Game >& );
 
       std::shared_ptr< const model::Game > game_model() const;
-      std::string name() const;
 
       void auralize_model();
 

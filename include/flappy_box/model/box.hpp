@@ -1,7 +1,7 @@
 # pragma once
 
 # include "model/game_object.hpp"
-
+# include "math.hpp"
 namespace flappy_box
 {
 

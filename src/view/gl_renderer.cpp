@@ -6,20 +6,13 @@
 
 using namespace ::view;
 
-GlRenderer::GlRenderer( const std::shared_ptr< const model::Game >& g, const std::string n )
+GlRenderer::GlRenderer( const std::shared_ptr< const model::Game >& g )
 : _game_model( g )
-, _name( n )
 {}
 
 std::shared_ptr< const ::model::Game > GlRenderer::game_model() const
 {
   return _game_model;
-}
-
-
-std::string GlRenderer::name() const
-{
-  return _name;
 }
 
 void GlRenderer::initialize( GlutWindow& win )
@@ -36,10 +29,20 @@ void GlRenderer::draw( GlutWindow& w )
   glLoadIdentity();
   gluLookAt( 0,-7,0, 0,0,0, 0,0,1 );
 
-  for( auto obj : this->game_model()->objects() )
-    _drawable_factory.create_for( obj )->glDraw( *this, w );
+  for( auto o : game_model()->objects() )
+  {
+    auto drawable = o->getData< Drawable >();
+    if( not drawable )
+    {
+      std::clog << "::view::GlRenderer::draw: Adding new Drawable for \"" << o->name() << "\"." << std::endl;
+      o->registerDataType( _drawable_factory.create_for( o ) );
+      drawable = o->getData< Drawable >();
+    }
 
-  glutSwapBuffers(); //Send the 3D scene to the screen
+    drawable->visualize( *this, w );
+  }
+
+  glutSwapBuffers(); 
 }
 
 void GlRenderer::resize( GlutWindow& win ) 

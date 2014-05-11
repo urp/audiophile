@@ -6,7 +6,6 @@
 # include <map>
 # include <typeinfo>
 # include <typeindex>
-# include "math.hpp"
 # include "factory_map.hpp"
 
 namespace model
@@ -55,6 +54,8 @@ namespace model
 template< typename DataType >
 void model::GameObject::registerDataType( const std::shared_ptr< DataType >& d )
 {
+  static_assert( std::is_base_of< Data, DataType >::value, "DataType must derive from model::GameObject::Data." );
+
   if( _data.find( typeid( DataType ) ) == _data.end() )
     _data.insert( { typeid( DataType ), d } );
   else if( typeid( _data[ typeid( DataType ) ] ) != typeid( d ) )

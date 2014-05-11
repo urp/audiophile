@@ -33,8 +33,6 @@ bool BoxObjectLogic::advance( ::controller::Logic& l, ::controller::InputEventHa
       alSourcePlay (helloSource);
       //alutSleep (1);
     }
-    
-    
   }
   
   _model->setVelocity( _model->velocity() + ( gravity + flapping ) * timestep_sec );

@@ -11,10 +11,8 @@ BoxGlDrawable::BoxGlDrawable(const std::shared_ptr< model::Box >& b )
 {}
 
 
-void BoxGlDrawable::glDraw( ::view::GlRenderer&, ::view::GlutWindow& )
+void BoxGlDrawable::visualize( ::view::GlRenderer&, ::view::GlutWindow& )
 {
-  std::clog << "flappy_box::view::BoxGlDrawable::glDraw: Hi." << std::endl; 
-
   glPushMatrix();
   {
     std::chrono::milliseconds rotation_interval( 5000 );

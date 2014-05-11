@@ -16,7 +16,7 @@ namespace flappy_box
 
         BoxGlDrawable( const std::shared_ptr< model::Box >& );
 
-        virtual void glDraw( ::view::GlRenderer&, ::view::GlutWindow& ) override;
+        virtual void visualize( ::view::GlRenderer&, ::view::GlutWindow& ) override;
 
       private:
         std::shared_ptr< model::Box > _model;

@@ -11,19 +11,18 @@ namespace view
   class GlRenderer
   {
     public:
-      class Drawable
+      class Drawable : public ::model::GameObject::Data
       {
         public:
-          virtual void glDraw( GlRenderer&, GlutWindow& ) = 0;
+          virtual void visualize( GlRenderer&, GlutWindow& ) = 0;
       };
 
       typedef factory_map< model::GameObject, Drawable > factory_type;
 
       GlRenderer() = delete;
-      GlRenderer( const std::shared_ptr< const model::Game >&, std::string name = "GlRenderer" );
+      GlRenderer( const std::shared_ptr< const model::Game >& );
 
       std::shared_ptr< const model::Game > game_model() const;
-      std::string name() const;
 
       factory_type&       drawable_factory()       { return _drawable_factory; }
       factory_type const& drawable_factory() const { return _drawable_factory; }
@@ -33,7 +32,6 @@ namespace view
       virtual void resize( GlutWindow& );
 
     private:
-      std::string _name;
       std::shared_ptr< const model::Game > _game_model;
       factory_type _drawable_factory;
  
