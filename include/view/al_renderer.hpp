@@ -5,43 +5,41 @@
 # include <string>
 # include <AL/al.h>
 
-namespace audiophile
+namespace view 
 {
-  namespace view 
+  class AlRenderer
   {
-    class AlRenderer
-    {
-      public:
-        struct Buffer
-        {
-          ALuint al_handle;
-        };
+    public:
+      struct Buffer
+      {
+        ALuint al_handle;
+      };
 
-        struct Source
-        {
-          Source();
-          Source( const shared_ptr< Buffer >& );
+      struct Source
+      {
+        Source();
+        Source( const shared_ptr< Buffer >& );
 
-          ALuint m_al_handle;
+        ALuint m_al_handle;
 
-          vec3_type m_position;
-          vec3_type m_velocity;
-        };
+        vec3_type m_position;
+        vec3_type m_velocity;
+      };
 
-        AlRenderer() = delete;
-        AlRenderer( const std::shared_ptr< const model::Game >&, std::string name = "AlRenderer" );
+      AlRenderer() = delete;
+      AlRenderer( const std::shared_ptr< const model::Game >&, std::string name = "AlRenderer" );
 
-        std::shared_ptr< const model::Game > game_model() const;
-        std::string name() const;
+      std::shared_ptr< const model::Game > game_model() const;
+      std::string name() const;
 
-        void auralize_model();
+      void auralize_model();
 
-      private:
-        std::string _name;
-        std::shared_ptr< const model::Game > _game_model;
+    private:
+      std::string _name;
+      std::shared_ptr< const model::Game > _game_model;
 
-        std::map< std::string, Buffer > _cached_buffers;
-    }; // Renderer
+      std::map< std::string, Buffer > _cached_buffers;
+  }; // Renderer
 
-  } // view::
-} // audiophile::
+} // view::
+

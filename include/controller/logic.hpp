@@ -4,34 +4,36 @@
 
 # include "model/game.hpp"
 
-namespace audiophile
+namespace controller
 {
-  namespace controller
+  class Logic : public InputEventHandler
   {
-    class Logic : public InputEventHandler
-    {
-      public:
-        struct ObjectLogic : public model::GameObject::Data
-        {
-          // Handle keyboard_event. Returns true if event has been handled.
-          virtual bool handle( const InputEventHandler::keyboard_event& ) { return false; };
-          // Advance Game.
-          virtual void advance( Logic& ) = 0;
-        };
+    public:
+      struct ObjectLogic : public model::GameObject::Data
+      {
+        // Handle keyboard_event. Returns true if event has been handled.
+        virtual bool handle( const InputEventHandler::keyboard_event& ) { return false; };
+        // Advance Game.
+        virtual void advance( Logic& ) = 0;
+      };
 
-        Logic() = delete;
-        Logic( const std::shared_ptr< model::Game >& );
+      typedef factory_map< model::GameObject, ObjectLogic > factory_type;
 
-        virtual bool handle( const controller::InputEventHandler::keyboard_event& );
-        virtual void advance();
+      Logic() = delete;
+      Logic( const std::shared_ptr< model::Game >& );
 
-        std::shared_ptr< model::Game >       game_model()       { return _model; }
-        std::shared_ptr< const model::Game > game_model() const { return _model; } 
+      virtual bool handle( const controller::InputEventHandler::keyboard_event& );
+      virtual void advance();
 
-      protected:
-        std::shared_ptr< model::Game > _model;
-        std::shared_ptr< factory_map< model::GameObject, ObjectLogic > > _obj_logic_factory;
-    };
+      std::shared_ptr< model::Game >       game_model()       { return _model; }
+      std::shared_ptr< model::Game const > game_model() const { return _model; } 
 
+      factory_type&       logic_factory()       { return _obj_logic_factory; }
+      factory_type const& logic_factory() const { return _obj_logic_factory; }
+
+    protected:
+      std::shared_ptr< model::Game > _model;
+      factory_type _obj_logic_factory;
   };
-}
+
+};

@@ -2,22 +2,15 @@
 
 # include "controller/logic.hpp"
 
-# include "model/default_game_object.hpp"
-
-# include "view/default_gl_renderer.hpp"
-
 # include <AL/alut.h>
 # include <GL/freeglut.h>
 
-using namespace audiophile::controller;
+using namespace ::controller;
 
 static std::function< void () >      __current_glut_advance_func = [](){ std::cerr << "Warning: Default function called in __current_glut_advance_func." << std::endl; };
-static std::function< void ( int ) > __current_glut_keyboard_func = []( int ){ std::cerr << "Warning: Default function called in __current_glut_keyboard_func." << std::endl; };
-
 
 GlutEngine::GlutEngine( const std::shared_ptr< Logic >& l ): Engine( l, l->game_model() )
 {
-
 }
 
 void glutTimer( int interval )
@@ -37,16 +30,13 @@ void GlutEngine::init( int& argc, char** argv )
 
   __current_glut_advance_func = std::bind( &Logic::advance, game_logic() );
 
-  glutTimerFunc( 50, glutTimer, 20 );
-
-  Engine::game_model()->addGameObject( std::make_shared< model::DefaultGameObject >() );
+  glutTimerFunc( _prefered_timestep_millisec, glutTimer, _prefered_timestep_millisec );
 }
 
 
 void GlutEngine::run()
 {
-  std::shared_ptr< view::GlutWindow > window( new view::GlutWindow( "audiophile", 500,500, std::make_shared< view::DefaultGlRenderer >( game_model() ), game_logic() ) );
-
+  // run game
   glutMainLoop();
 
   alutExit();

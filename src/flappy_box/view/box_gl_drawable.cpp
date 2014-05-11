@@ -1,22 +1,22 @@
-# include "view/default_gl_drawable.hpp"
+# include "flappy_box/view/box_gl_drawable.hpp"
 
 # include <GL/gl.h>
 # include <GL/glu.h>
 
-using namespace audiophile::view;
+using namespace ::flappy_box::view;
 
-DefaultGLDrawable::DefaultGLDrawable( const std::shared_ptr< model::GameObject >& o )
-: _model( std::dynamic_pointer_cast< model::DefaultGameObject >( o ) )
+
+BoxGlDrawable::BoxGlDrawable(const std::shared_ptr< ::model::GameObject >& o )
+: _model( std::dynamic_pointer_cast< model::Box >( o ) )
 {
-  
   if( not _model )
-    throw std::logic_error( "DefaultGLDrawable::DefaultGLDrawable: GameObject is no DefaultGameObject." );
+    throw std::logic_error( "BoxGlDrawable::BoxGlDrawable: GameObject is no flappy_box::model::Box." );
 }
 
 
-void DefaultGLDrawable::glDraw( GlRenderer&, GlutWindow& )
+void BoxGlDrawable::glDraw( ::view::GlRenderer&, ::view::GlutWindow& )
 {
-  std::clog << "Hi from DefaultDrawable::glDraw." << std::endl; 
+  std::clog << "Hi from BoxGlDrawable::glDraw." << std::endl; 
   //Clear information from last draw
 //   glBegin(GL_QUADS); //Begin quadrilateral coordinates
 //   //Trapezoid
@@ -40,25 +40,25 @@ void DefaultGLDrawable::glDraw( GlRenderer&, GlutWindow& )
   {
     std::chrono::milliseconds rotation_interval( 5000 );
     double angle = _model->angle();
-    
+
     glRotated( angle, 0., 0., 1. );
     glColor3f( .5,.5,.5 );
-    
+
     float box_vertices[] = { -1.,-1.,-1.
-      , -1.,-1., 1.
-      , -1., 1.,-1.
-      , -1., 1., 1.
-      , 1.,-1.,-1.
-      , 1.,-1., 1.
-      , 1., 1.,-1.
-      , 1., 1., 1.
-    };
+                           , -1.,-1., 1.
+                           , -1., 1.,-1.
+                           , -1., 1., 1.
+                           ,  1.,-1.,-1.
+                           ,  1.,-1., 1.
+                           ,  1., 1.,-1.
+                           ,  1., 1., 1.
+                           };
     glEnableClientState( GL_VERTEX_ARRAY );
     glVertexPointer( 3, GL_FLOAT, 0, box_vertices );
     //glColorPointer( );
     unsigned short idx_wire_loop1[] = { 2,6,7,3,1,5,7,6,4,0 };
     glDrawElements( GL_LINE_LOOP, 10, GL_UNSIGNED_SHORT, idx_wire_loop1 );
-    
+
     unsigned short idx_wire_lines[] = { 2,3, 0,1, 4,5 };
     glDrawElements( GL_LINES, 6, GL_UNSIGNED_SHORT, idx_wire_lines );
     glDisableClientState( GL_VERTEX_ARRAY );

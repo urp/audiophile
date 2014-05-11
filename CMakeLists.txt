@@ -56,16 +56,14 @@ add_executable( audiophile src/main.cpp
                            src/controller/engine.cpp
                            src/controller/glut_engine.cpp
                            src/controller/logic.cpp
-                           src/controller/default_logic.cpp
-                           src/controller/default_object_logic.cpp 
                            # view
                            src/view/glut_window.cpp
                            src/view/gl_renderer.cpp
-                           src/view/default_gl_renderer.cpp
-                           src/view/default_gl_drawable.cpp
-                           # default game
-                           src/model/default_game_object.cpp
-
+                           # flappy_box
+                           src/flappy_box/model/box.cpp
+                           src/flappy_box/controller/flappy_engine.cpp 
+                           src/flappy_box/controller/box_object_logic.cpp 
+                           src/flappy_box/view/box_gl_drawable.cpp
               )
 
 target_link_libraries( audiophile ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${OPENAL_LIBRARY} ${ALUT_LIBRARY} )

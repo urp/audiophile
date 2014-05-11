@@ -9,54 +9,50 @@
 # include "math.hpp"
 # include "factory_map.hpp"
 
-namespace audiophile
+namespace model
 {
+  class Game;
 
-  namespace model
+  class GameObject 
   {
-    class Game;
+    public:
 
-    class GameObject 
-    {
-      public:
+      GameObject( const bool dynamic_flag = true, const std::string& name = "untitled GameObject" );
 
-        GameObject( const bool dynamic_flag = true, const std::string& name = "untitled GameObject" );
+      struct Data
+      {
+        virtual ~Data() {}
+      };
 
-        struct Data
-        {
-          virtual ~Data() {}
-        };
+      // TODO: virtual functional
+      template< typename DataType >
+      void registerDataType( const std::shared_ptr< DataType >& );
 
-        // TODO: virtual functional
-        template< typename DataType >
-        void registerDataType( const std::shared_ptr< DataType >& );
+      template< typename DataType >
+      std::shared_ptr< DataType > getData();
 
-        template< typename DataType >
-        std::shared_ptr< DataType > getData();
-
-        virtual sphere< distance_type, 2 > getBoundingSphere() const = 0;
-        virtual box< distance_type, 2 >    getBoundingBox()    const = 0;
+      virtual sphere< distance_type, 2 > getBoundingSphere() const = 0;
+      virtual box< distance_type, 2 >    getBoundingBox()    const = 0;
 //      virtual convex_hull_2d< distance_type > getConvexHull()     const = 0;
 
-        bool is_dynamic() const { return _dynamic_flag; }
+      bool is_dynamic() const { return _dynamic_flag; }
 
-        const std::string& name() const { return _name; }
+      const std::string& name() const { return _name; }
 
-      private:
+    private:
 
-        bool _dynamic_flag;
-        std::map< std::type_index, std::shared_ptr< Data > > _data; 
-        std::string _name;
+      bool _dynamic_flag;
+      std::map< std::type_index, std::shared_ptr< Data > > _data; 
+      std::string _name;
 
-    }; // GameObject
+  }; // GameObject
 
-  } // model::
-} // audiophile::
+} // model::
 
 // implementation //
 
 template< typename DataType >
-void audiophile::model::GameObject::registerDataType( const std::shared_ptr< DataType >& d )
+void model::GameObject::registerDataType( const std::shared_ptr< DataType >& d )
 {
   if( _data.find( typeid( DataType ) ) == _data.end() )
     _data.insert( { typeid( DataType ), d } );
@@ -67,7 +63,7 @@ void audiophile::model::GameObject::registerDataType( const std::shared_ptr< Dat
 }
 
 template< typename DataType >
-std::shared_ptr< DataType > audiophile::model::GameObject::getData()
+std::shared_ptr< DataType > model::GameObject::getData()
 {
   auto found = _data.find( typeid( DataType ) );
 

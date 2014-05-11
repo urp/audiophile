@@ -1,12 +1,11 @@
 # include "view/glut_window.hpp"
 
-
 # include <GL/freeglut.h>
-//# include <GL/freeglut_ext.h>
+
 # include <stdexcept>
 # include <iostream>
 
-using namespace audiophile::view;
+using namespace ::view;
 
 GlutWindow::GlutWindow( const std::string& name, size_t width, size_t height, const std::shared_ptr< GlRenderer >& r, const std::shared_ptr< controller::InputEventHandler >& h )
 : _name( name )
@@ -70,12 +69,12 @@ std::shared_ptr< const GlRenderer > GlutWindow::renderer() const
   return _renderer; 
 }
 
-std::shared_ptr< audiophile::controller::InputEventHandler > GlutWindow::input_event_handler()
+std::shared_ptr< ::controller::InputEventHandler > GlutWindow::input_event_handler()
 {
   return _input_event_handler;
 }
 
-std::shared_ptr< const audiophile::controller::InputEventHandler > GlutWindow::input_event_handler() const
+std::shared_ptr< const ::controller::InputEventHandler > GlutWindow::input_event_handler() const
 {
   return _input_event_handler;
 }
@@ -88,7 +87,7 @@ void GlutWindow::glutDraw()
   {
     win->renderer()->draw( *win );
   }
-  else throw std::out_of_range( "Could not get pointer to GlutWindow." );
+  else throw std::out_of_range( "view::GlutWindow::glutDraw: Could not get pointer to GlutWindow." );
 }
 
 void GlutWindow::glutReshape( int width, int height )
@@ -100,14 +99,14 @@ void GlutWindow::glutReshape( int width, int height )
     win->_height= height;
     win->renderer()->resize( *win ); 
   }
-  else throw std::out_of_range( "Could not get pointer to GlutWindow." );
+  else throw std::out_of_range( "view::GlutWindow::glutReshape: Could not get pointer to GlutWindow." );
 }
 
 void GlutWindow::glutKeyboard(unsigned char glut_key, int mouse_x, int mouse_y)
 {
   GlutWindow* win = static_cast< GlutWindow* >( glutGetWindowData() );
   if( not win )
-    throw std::out_of_range( "Could not get pointer to GlutWindow." );
+    throw std::out_of_range( "view::GlutWindow::glutKeyboard: Could not get pointer to GlutWindow." );
 
   controller::InputEventHandler::keyboard_event ev;
   typedef controller::InputEventHandler::keyboard_event event_type;
@@ -190,7 +189,7 @@ void GlutWindow::glutKeyboard(unsigned char glut_key, int mouse_x, int mouse_y)
     // TODO case '>': ev.key = event_type::KEY_; break;
     // TODO case '|': ev.key = event_type::KEY_; break;
 
-    default: throw std::out_of_range( "view::GlutWindow::glutKeyboard: unsupported key." );
+    default: throw std::out_of_range( "::view::GlutWindow::glutKeyboard: unsupported key." );
   }
 
   //TODO: fill event with more keys & infos
@@ -205,7 +204,7 @@ std::shared_ptr< GlRenderer > GlutWindow::renderer()
 
 void GlutWindow::setRenderer(const std::shared_ptr< GlRenderer >& r)
 {
-  if( not r ) throw std::logic_error( "view::GlutWindow::setRenderer: Invalid renderer." );
+  if( not r ) throw std::logic_error( "::view::GlutWindow::setRenderer: Invalid renderer." );
   _renderer = r;
 
   ensureCurrent();
