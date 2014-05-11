@@ -52,15 +52,15 @@ namespace audiophile
             , KEY_N = 'n'
             , KEY_M = 'm'
 
-            , KEY_DEGREE
-            , KEY_EXCLAMATION_MARK
+            , KEY_DEGREE //= '°'
+            , KEY_EXCLAMATION_MARK = '!'
             , KEY_DASY
-            , KEY_PARAGRAPH
-            , KEY_DOLLAR
-            , KEY_PERCENT
-            , KEY_AND
-            , KEY_SLASH
-            , KEY_CURLY_OPEN
+            , KEY_PARAGRAPH 
+            , KEY_DOLLAR = '$'
+            , KEY_PERCENT = '%'
+            , KEY_AND = '&'
+            , KEY_SLASH = '/'
+            , KEY_CURLY_OPEN = '{'
             , KEY_PARENTHESIS_OPEN
             , KEY_BRACKET_OPEN
             , KEY_PARENTHESIS_CLOSE
@@ -84,14 +84,14 @@ namespace audiophile
 
           enum modifier_type 
             {
-              
             };
 
           key_type key;
           modifier_type modifier;
         };
 
-        virtual bool handleKeyboardEvent( const keyboard_event& ) = 0;
+        // Return true if event was handled.
+        virtual bool handle( const keyboard_event& ) = 0;
     };
 
   } // controller::

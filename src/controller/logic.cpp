@@ -32,7 +32,21 @@ void audiophile::controller::Logic::advance()
   }
 }
 
-void audiophile::controller::Logic::handleKeyboard(const audiophile::controller::InputEventHandler::keyboard_event&)
+bool audiophile::controller::Logic::handle( const audiophile::controller::InputEventHandler::keyboard_event& ev )
 {
-
+  for( auto o : game_model()->objects() )
+  {
+    if( o->is_dynamic() )
+    {
+      auto obj_logic = o->getData< ObjectLogic >();
+      if( not obj_logic )
+      {
+        std::clog << "controller::Logic::advance: Adding new ObjectLogic for \"" << o->name() << "\"." << std::endl;
+        o->registerDataType( _obj_logic_factory->create_for( o ) );
+        obj_logic = o->getData< ObjectLogic >();
+      }
+      
+      if( obj_logic->handle( ev ) ) return true;
+    }
+  }
 }

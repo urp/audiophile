@@ -1,4 +1,6 @@
-#include "controller/default_object_logic.hpp"
+# include "controller/default_object_logic.hpp"
+# include <AL/alut.h>
+# include <thread>
 
 using namespace audiophile::controller;
 
@@ -18,3 +20,30 @@ void DefaultObjectLogic::advance( Logic& l )
   _model->setAngle( new_angle );
 }
 
+bool DefaultObjectLogic::handle( const InputEventHandler::keyboard_event& ev )
+{
+  if( ev.key == InputEventHandler::keyboard_event::KEY_A )
+  { 
+    std::cout << "A pressed" << std::endl;
+    {
+      ALuint helloBuffer, helloSource;
+      helloBuffer = alutCreateBufferHelloWorld ();
+      alGenSources (1, &helloSource);
+      alSourcei (helloSource, AL_BUFFER, helloBuffer);
+      alSourcePlay (helloSource);
+      //alutSleep (1);
+    }
+    std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
+    {
+      ALuint helloBuffer, helloSource;
+      helloBuffer = alutCreateBufferHelloWorld ();
+      alGenSources (1, &helloSource);
+      alSourcei (helloSource, AL_BUFFER, helloBuffer);
+      alSourcePlay (helloSource);
+      alutSleep (1);
+    }
+    
+  }
+  
+  return false;
+}

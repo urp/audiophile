@@ -6,15 +6,13 @@
 
 # include "view/default_gl_renderer.hpp"
 
-# include <GL/freeglut.h>
-
-//# include <stdlib.h>
 # include <AL/alut.h>
-#include <thread>
+# include <GL/freeglut.h>
 
 using namespace audiophile::controller;
 
-static std::function< void () > __current_glut_advance_func = [](){ std::cerr << "Warning: Default function called in __current_glut_advance_func." << std::endl; };
+static std::function< void () >      __current_glut_advance_func = [](){ std::cerr << "Warning: Default function called in __current_glut_advance_func." << std::endl; };
+static std::function< void ( int ) > __current_glut_keyboard_func = []( int ){ std::cerr << "Warning: Default function called in __current_glut_keyboard_func." << std::endl; };
 
 
 GlutEngine::GlutEngine( const std::shared_ptr< Logic >& l ): Engine( l, l->game_model() )
@@ -47,38 +45,11 @@ void GlutEngine::init( int& argc, char** argv )
 
 void GlutEngine::run()
 {
-  std::shared_ptr< view::GLUTWindow > window( new view::GLUTWindow( "audiophile", 500,500, std::make_shared< view::DefaultGLRenderer >( game_model() ), shared_from_this() ) );
+  std::shared_ptr< view::GlutWindow > window( new view::GlutWindow( "audiophile", 500,500, std::make_shared< view::DefaultGlRenderer >( game_model() ), game_logic() ) );
 
   glutMainLoop();
 
   alutExit();
 }
 
-bool GlutEngine::handleKeyboardEvent( const InputEventHandler::keyboard_event& ev )
-{
-  if( ev.key == InputEventHandler::keyboard_event::KEY_A )
-  { 
-    std::cout << "A pressed" << std::endl;
-    {
-      ALuint helloBuffer, helloSource;
-      helloBuffer = alutCreateBufferHelloWorld ();
-      alGenSources (1, &helloSource);
-      alSourcei (helloSource, AL_BUFFER, helloBuffer);
-      alSourcePlay (helloSource);
-      //alutSleep (1);
-    }
-    std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
-    {
-      ALuint helloBuffer, helloSource;
-      helloBuffer = alutCreateBufferHelloWorld ();
-      alGenSources (1, &helloSource);
-      alSourcei (helloSource, AL_BUFFER, helloBuffer);
-      alSourcePlay (helloSource);
-      alutSleep (1);
-    }
-
-  }
-
-  return false;
-}
 

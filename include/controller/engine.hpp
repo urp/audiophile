@@ -13,7 +13,7 @@ namespace audiophile
   namespace controller 
   {
     /// Application class
-    class Engine : public InputEventHandler
+    class Engine
     {
       public:
         Engine( const std::shared_ptr< Logic >&

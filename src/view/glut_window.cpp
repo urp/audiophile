@@ -8,20 +8,20 @@
 
 using namespace audiophile::view;
 
-GLUTWindow::GLUTWindow( const std::string& name, size_t width, size_t height, const std::shared_ptr< GLRenderer >& r, const std::shared_ptr< controller::InputEventHandler >& h )
+GlutWindow::GlutWindow( const std::string& name, size_t width, size_t height, const std::shared_ptr< GlRenderer >& r, const std::shared_ptr< controller::InputEventHandler >& h )
 : _name( name )
 , _width( width )
 , _height( height )
 , _renderer( r )
 , _input_event_handler( h )
 {
-  // GLUT GLUTWindow Initialization:
+  // GLUT GlutWindow Initialization:
   glutInitWindowSize( width, height);
   glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
   _glut_win_id = glutCreateWindow( "audiophile" );
   if( _glut_win_id < 1 ) 
-    throw std::logic_error( "view::GLUTWindow::GLUTWindow: Could not create GLUT window." );
+    throw std::logic_error( "view::GlutWindow::GlutWindow: Could not create GLUT window." );
 
   glutSetWindowData( this );
 
@@ -31,83 +31,83 @@ GLUTWindow::GLUTWindow( const std::string& name, size_t width, size_t height, co
   glutKeyboardFunc( glutKeyboard );
 }
 
-GLUTWindow::~GLUTWindow()
+GlutWindow::~GlutWindow()
 {
   ensureCurrent();
   glutSetWindowData( nullptr );
   glutDestroyWindow( _glut_win_id );
 }
 
-void GLUTWindow::invalidate()
+void GlutWindow::invalidate()
 {
   ensureCurrent();
   glutPostRedisplay();
 }
 
 
-void GLUTWindow::ensureCurrent() const
+void GlutWindow::ensureCurrent() const
 {
   if( _glut_win_id != glutGetWindow() ) 
   {
-    std::clog << "view::GLUTWindow::ensureCurrent: Switching to window " << _name << " with id " << _glut_win_id << "…" << std::endl;
+    std::clog << "view::GlutWindow::ensureCurrent: Switching to window " << _name << " with id " << _glut_win_id << "…" << std::endl;
     glutSetWindow( _glut_win_id );
   }
 }
 
-unsigned int GLUTWindow::width() const
+unsigned int GlutWindow::width() const
 {
   return _width;
 }
 
-unsigned int GLUTWindow::height() const
+unsigned int GlutWindow::height() const
 {
   return _height;
 }
 
 
-std::shared_ptr< const GLRenderer > GLUTWindow::renderer() const
+std::shared_ptr< const GlRenderer > GlutWindow::renderer() const
 { 
   return _renderer; 
 }
 
-std::shared_ptr< audiophile::controller::InputEventHandler > GLUTWindow::input_event_handler()
+std::shared_ptr< audiophile::controller::InputEventHandler > GlutWindow::input_event_handler()
 {
   return _input_event_handler;
 }
 
-std::shared_ptr< const audiophile::controller::InputEventHandler > GLUTWindow::input_event_handler() const
+std::shared_ptr< const audiophile::controller::InputEventHandler > GlutWindow::input_event_handler() const
 {
   return _input_event_handler;
 }
 
 
-void GLUTWindow::glutDraw() 
+void GlutWindow::glutDraw() 
 { 
-  GLUTWindow* win = static_cast< GLUTWindow* >( glutGetWindowData() );
+  GlutWindow* win = static_cast< GlutWindow* >( glutGetWindowData() );
   if( win )
   {
     win->renderer()->draw( *win );
   }
-  else throw std::out_of_range( "Could not get pointer to GLUTWindow." );
+  else throw std::out_of_range( "Could not get pointer to GlutWindow." );
 }
 
-void GLUTWindow::glutReshape( int width, int height )
+void GlutWindow::glutReshape( int width, int height )
 {
-  GLUTWindow* win = static_cast< GLUTWindow* >( glutGetWindowData() );
+  GlutWindow* win = static_cast< GlutWindow* >( glutGetWindowData() );
   if( win ) 
   {
     win->_width = width;
     win->_height= height;
     win->renderer()->resize( *win ); 
   }
-  else throw std::out_of_range( "Could not get pointer to GLUTWindow." );
+  else throw std::out_of_range( "Could not get pointer to GlutWindow." );
 }
 
-void GLUTWindow::glutKeyboard(unsigned char glut_key, int mouse_x, int mouse_y)
+void GlutWindow::glutKeyboard(unsigned char glut_key, int mouse_x, int mouse_y)
 {
-  GLUTWindow* win = static_cast< GLUTWindow* >( glutGetWindowData() );
+  GlutWindow* win = static_cast< GlutWindow* >( glutGetWindowData() );
   if( not win )
-    throw std::out_of_range( "Could not get pointer to GLUTWindow." );
+    throw std::out_of_range( "Could not get pointer to GlutWindow." );
 
   controller::InputEventHandler::keyboard_event ev;
   typedef controller::InputEventHandler::keyboard_event event_type;
@@ -190,22 +190,22 @@ void GLUTWindow::glutKeyboard(unsigned char glut_key, int mouse_x, int mouse_y)
     // TODO case '>': ev.key = event_type::KEY_; break;
     // TODO case '|': ev.key = event_type::KEY_; break;
 
-    default: throw std::out_of_range( "view::GLUTWindow::glutKeyboard: unsupported key." );
+    default: throw std::out_of_range( "view::GlutWindow::glutKeyboard: unsupported key." );
   }
 
   //TODO: fill event with more keys & infos
 
-  win->input_event_handler()->handleKeyboardEvent( ev );
+  win->input_event_handler()->handle( ev );
 }
 
-std::shared_ptr< GLRenderer > GLUTWindow::renderer()
+std::shared_ptr< GlRenderer > GlutWindow::renderer()
 {
   return _renderer;
 }
 
-void GLUTWindow::setRenderer(const std::shared_ptr< GLRenderer >& r)
+void GlutWindow::setRenderer(const std::shared_ptr< GlRenderer >& r)
 {
-  if( not r ) throw std::logic_error( "view::GLUTWindow::setRenderer: Invalid renderer." );
+  if( not r ) throw std::logic_error( "view::GlutWindow::setRenderer: Invalid renderer." );
   _renderer = r;
 
   ensureCurrent();

@@ -9,7 +9,7 @@ namespace audiophile
   namespace controller 
   {
 
-    class GlutEngine : public Engine, public std::enable_shared_from_this< GlutEngine >
+    class GlutEngine : public Engine
     {
       public:
         GlutEngine( const std::shared_ptr< Logic >& );
@@ -18,7 +18,6 @@ namespace audiophile
         virtual void run() override;
 
       protected:
-        virtual bool handleKeyboardEvent( const InputEventHandler::keyboard_event& ) override;
     };
 
   } // controller::

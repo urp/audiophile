@@ -10,13 +10,13 @@ namespace audiophile
 {
   namespace view
   {
-    class DefaultGLDrawable : public GLRenderer::Drawable
+    class DefaultGLDrawable : public GlRenderer::Drawable
     {
       public:
 
         DefaultGLDrawable( const std::shared_ptr< model::GameObject >& );
 
-        virtual void glDraw( GLRenderer&, GLUTWindow& ) override;
+        virtual void glDraw( GlRenderer&, GlutWindow& ) override;
 
       private:
         std::shared_ptr< model::DefaultGameObject > _model;

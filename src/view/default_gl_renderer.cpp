@@ -10,19 +10,19 @@
 
 using namespace audiophile::view;
 
-DefaultGLRenderer::DefaultGLRenderer( const std::shared_ptr< const model::Game >& g, const std::string& name )
-: GLRenderer( g, name )
+DefaultGlRenderer::DefaultGlRenderer( const std::shared_ptr< const model::Game >& g, const std::string& name )
+: GlRenderer( g, name )
 {
   _drawable_factory.register_module< model::DefaultGameObject>( []( const std::shared_ptr< model::GameObject >& p ) { return std::make_shared< DefaultGLDrawable >( p ); } );
 }
 
-void DefaultGLRenderer::initialize( GLUTWindow& win )
+void DefaultGlRenderer::initialize( GlutWindow& win )
 {
   resize( win );
   draw( win );
 }
 
-void DefaultGLRenderer::draw( GLUTWindow& w )
+void DefaultGlRenderer::draw( GlutWindow& w )
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
@@ -34,7 +34,7 @@ void DefaultGLRenderer::draw( GLUTWindow& w )
   glutSwapBuffers(); //Send the 3D scene to the screen
 }
 
-void DefaultGLRenderer::resize( GLUTWindow& win ) 
+void DefaultGlRenderer::resize( GlutWindow& win ) 
 {
   glViewport( 0,0, win.width(), win.height() );
   glMatrixMode(GL_PROJECTION); //Switch to setting the camera perspective

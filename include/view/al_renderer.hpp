@@ -9,7 +9,7 @@ namespace audiophile
 {
   namespace view 
   {
-    class ALRenderer
+    class AlRenderer
     {
       public:
         struct Buffer
@@ -28,8 +28,8 @@ namespace audiophile
           vec3_type m_velocity;
         };
 
-        ALRenderer() = delete;
-        ALRenderer( const std::shared_ptr< const model::Game >&, std::string name = "ALRenderer" );
+        AlRenderer() = delete;
+        AlRenderer( const std::shared_ptr< const model::Game >&, std::string name = "AlRenderer" );
 
         std::shared_ptr< const model::Game > game_model() const;
         std::string name() const;

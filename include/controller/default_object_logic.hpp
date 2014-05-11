@@ -14,6 +14,7 @@ namespace audiophile
         DefaultObjectLogic() = delete;
         DefaultObjectLogic( const std::shared_ptr< model::GameObject >& );
 
+        virtual bool handle( const InputEventHandler::keyboard_event& ) override;
         virtual void advance( Logic& ) override;
 
       private:

@@ -11,21 +11,21 @@ namespace audiophile
   namespace view
   {
     // forward
-    class GLRenderer;
+    class GlRenderer;
 
-    class GLUTWindow
+    class GlutWindow
     {
       public:
 
-        GLUTWindow( const std::string& name, size_t width, size_t height, const std::shared_ptr< GLRenderer >&, const std::shared_ptr< controller::InputEventHandler >& );
-        ~GLUTWindow();
+        GlutWindow( const std::string& name, size_t width, size_t height, const std::shared_ptr< GlRenderer >&, const std::shared_ptr< controller::InputEventHandler >& );
+        ~GlutWindow();
 
         unsigned int width() const;
         unsigned int height() const;
 
-        std::shared_ptr< GLRenderer > renderer();
-        std::shared_ptr< const GLRenderer > renderer() const;
-        void setRenderer( const std::shared_ptr< GLRenderer >& );
+        std::shared_ptr< GlRenderer > renderer();
+        std::shared_ptr< const GlRenderer > renderer() const;
+        void setRenderer( const std::shared_ptr< GlRenderer >& );
 
         std::shared_ptr< controller::InputEventHandler > input_event_handler();
         std::shared_ptr< const controller::InputEventHandler > input_event_handler() const;
@@ -44,10 +44,10 @@ namespace audiophile
         size_t      _height;
         int         _glut_win_id;
 
-        std::shared_ptr< GLRenderer > _renderer;
+        std::shared_ptr< GlRenderer > _renderer;
 
         std::shared_ptr< controller::InputEventHandler > _input_event_handler;
-    }; // GLUTWindow
+    }; // GlutWindow
 
   } // view::
 } // audiophile::

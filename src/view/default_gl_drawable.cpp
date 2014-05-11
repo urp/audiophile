@@ -14,7 +14,7 @@ DefaultGLDrawable::DefaultGLDrawable( const std::shared_ptr< model::GameObject >
 }
 
 
-void DefaultGLDrawable::glDraw( GLRenderer&, GLUTWindow& )
+void DefaultGLDrawable::glDraw( GlRenderer&, GlutWindow& )
 {
   std::clog << "Hi from DefaultDrawable::glDraw." << std::endl; 
   //Clear information from last draw
