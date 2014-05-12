@@ -1,10 +1,9 @@
 # pragma once
 
 # include <memory>
-# include <iostream>
 # include <string>
+# include <iostream>
 # include <map>
-# include <typeinfo>
 # include <typeindex>
 # include "factory_map.hpp"
 

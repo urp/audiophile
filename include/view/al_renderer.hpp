@@ -34,9 +34,9 @@ namespace view
       typedef factory_map< model::GameObject, Audible > delegate_factory_type;
 
       AlRenderer() = delete;
-      AlRenderer( const std::shared_ptr< const model::Game >& );
+      AlRenderer( const std::shared_ptr< const model::Game >& g ) : _game_model( g ) {};
 
-      std::shared_ptr< const model::Game > game_model() const;
+      std::shared_ptr< const model::Game > game_model() const { return _game_model; }
 
       /// Return factory creating Audible delegates.
       delegate_factory_type&       audible_factory()       { return _audible_factory; }
