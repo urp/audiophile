@@ -18,10 +18,10 @@ std::shared_ptr< const ::model::Game > GlRenderer::game_model() const
 void GlRenderer::initialize( GlutWindow& win )
 {
   resize( win );
-  draw( win );
+  visualize_model( win );
 }
 
-void GlRenderer::draw( GlutWindow& w )
+void GlRenderer::visualize_model( GlutWindow& w )
 {
   glClearColor( 0.1, 0.2, 0.3, 1.);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -36,7 +36,7 @@ void GlRenderer::draw( GlutWindow& w )
     {
       std::clog << "::view::GlRenderer::draw: Adding new Drawable for \"" << o->name() << "\"." << std::endl;
       drawable = _drawable_factory.create_for( o );
-      o->registerDataType( drawable );
+      o->registerData( drawable );
     }
 
     if( drawable ) drawable->visualize( *this, w );

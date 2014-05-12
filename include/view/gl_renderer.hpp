@@ -28,7 +28,7 @@ namespace view
       delegate_factory_type const& drawable_factory() const { return _drawable_factory; }
 
       virtual void initialize( GlutWindow& );
-      virtual void draw( GlutWindow& );
+      virtual void visualize_model( GlutWindow& );
       virtual void resize( GlutWindow& );
 
     private:

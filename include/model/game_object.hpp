@@ -25,7 +25,7 @@ namespace model
       };
 
       template< typename DataType >
-      void registerDataType( const std::shared_ptr< DataType >& );
+      void registerData( const std::shared_ptr< DataType >& );
 
       template< typename DataType >
       std::shared_ptr< DataType > getData();
@@ -51,7 +51,7 @@ namespace model
 // implementation //
 
 template< typename DataType >
-void model::GameObject::registerDataType( const std::shared_ptr< DataType >& d )
+void model::GameObject::registerData( const std::shared_ptr< DataType >& d )
 {
   static_assert( std::is_base_of< Data, DataType >::value, "DataType must derive from model::GameObject::Data." );
 

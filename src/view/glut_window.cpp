@@ -85,7 +85,7 @@ void GlutWindow::glutDraw()
   GlutWindow* win = static_cast< GlutWindow* >( glutGetWindowData() );
   if( win )
   {
-    win->renderer()->draw( *win );
+    win->renderer()->visualize_model( *win );
   }
   else throw std::out_of_range( "view::GlutWindow::glutDraw: Could not get pointer to GlutWindow." );
 }

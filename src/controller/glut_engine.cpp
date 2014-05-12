@@ -28,7 +28,7 @@ void GlutEngine::init( int& argc, char** argv )
 
   glutSetOption( GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION );
 
-  __current_glut_advance_func = std::bind( &Logic::advance, game_logic(), controller::InputEventHandler::keyboard_event() );
+  __current_glut_advance_func = std::bind( &Logic::advance_model, game_logic(), controller::InputEventHandler::keyboard_event() );
 
   glutTimerFunc( _prefered_timestep_millisec, glutTimer, _prefered_timestep_millisec );
 }

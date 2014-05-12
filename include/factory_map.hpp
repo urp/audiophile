@@ -32,7 +32,7 @@ class factory_map
         throw std::logic_error( "factory::register_module: A module with key " + std::string( typeid( T ).name() ) + " is already registered." );
     }
 
-    // Find module for derived type of *in.
+    // Call module for derived type of *in.
     std::shared_ptr< Out > create_for( const std::shared_ptr< In >& in )
     {
       auto found = _modules.find( typeid( *in ) );

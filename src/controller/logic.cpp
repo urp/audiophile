@@ -8,10 +8,10 @@ Logic::Logic( const std::shared_ptr< ::model::Game >& g )
 
 bool Logic::handle( const InputEventHandler::keyboard_event& ev )
 {
-  return advance( ev );
+  return advance_model( ev );
 }
 
-bool Logic::advance( const ::controller::InputEventHandler::keyboard_event& ev )
+bool Logic::advance_model( const ::controller::InputEventHandler::keyboard_event& ev )
 {
   game_model()->setTimestamp( std::chrono::steady_clock::now() );
 
@@ -26,7 +26,7 @@ bool Logic::advance( const ::controller::InputEventHandler::keyboard_event& ev )
       {
         std::clog << "::controller::Logic::advance: Adding new ObjectLogic for \"" << o->name() << "\"." << std::endl;
         obj_logic = _obj_logic_factory.create_for( o );
-        o->registerDataType( obj_logic );
+        o->registerData( obj_logic );
       }
 
       if( obj_logic and obj_logic->advance( *this, ev ) ) return true;
