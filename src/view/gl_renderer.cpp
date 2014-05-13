@@ -6,11 +6,11 @@
 
 using namespace ::view;
 
-GlRenderer::GlRenderer( const std::shared_ptr< const model::Game >& g )
+GlRenderer::GlRenderer( std::shared_ptr< model::Game const > const& g )
 : _game_model( g )
 {}
 
-std::shared_ptr< const ::model::Game > GlRenderer::game_model() const
+std::shared_ptr< ::model::Game const > GlRenderer::game_model() const
 {
   return _game_model;
 }

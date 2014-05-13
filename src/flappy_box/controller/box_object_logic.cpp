@@ -22,24 +22,17 @@ bool BoxObjectLogic::advance( ::controller::Logic& l, ::controller::InputEventHa
 
   flapping[2] -= 10 * flapping[2] * timestep_sec;
   if( ev.key == ::controller::InputEventHandler::keyboard_event::KEY_A )
-  { 
+  {
     flapping[2] += 20.;
     std::cout << "flappy_box::controller::BoxObjectLogic::handle: Key A pressed." << std::endl;
-    {
-      ALuint helloBuffer, helloSource;
-      helloBuffer = alutCreateBufferHelloWorld ();
-      alGenSources (1, &helloSource);
-      alSourcei (helloSource, AL_BUFFER, helloBuffer);
-      alSourcePlay (helloSource);
-      //alutSleep (1);
-    }
   }
-  
+
+  // Euler integration
   _model->setVelocity( _model->velocity() + ( gravity + flapping ) * timestep_sec );
   _model->setPosition( _model->position() + _model->velocity() * timestep_sec );
 
   std::cout << "flappy_box::controller::BoxObjectLogic::advance:"
-  << " dt  " << timestep_sec << " flap " << flapping[2]<< std::endl
+            << " dt  " << timestep_sec << " flap " << flapping[2]<< std::endl
             << " pos " << std::endl << _model->position() << std::endl
             << " vel " << std::endl << _model->velocity() << std::endl;
 

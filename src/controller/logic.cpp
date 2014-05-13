@@ -6,11 +6,6 @@ Logic::Logic( const std::shared_ptr< ::model::Game >& g )
 : _model( g )
 { }
 
-bool Logic::handle( const InputEventHandler::keyboard_event& ev )
-{
-  return advance_model( ev );
-}
-
 bool Logic::advance_model( const ::controller::InputEventHandler::keyboard_event& ev )
 {
   game_model()->setTimestamp( std::chrono::steady_clock::now() );

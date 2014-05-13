@@ -4,8 +4,6 @@
 
 # include "flappy_box/model/box.hpp"
 
-# include <iostream>
-
 namespace flappy_box
 {
   namespace view

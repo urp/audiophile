@@ -1,6 +1,10 @@
 # pragma once
 
 # include "controller/glut_engine.hpp"
+# include "controller/input_event_handler.hpp"
+
+# include "view/al_renderer.hpp"
+# include "view/gl_renderer.hpp"
 
 # include <chrono>
 
@@ -12,17 +16,25 @@ namespace flappy_box
     class FlappyEngine : public ::controller::GlutEngine
     {
       public:
-        FlappyEngine( const std::shared_ptr< ::controller::Logic >& );
+        FlappyEngine( std::shared_ptr< ::controller::Logic > const& );
 
         virtual void init( int&, char** ) override;
         virtual void run() override;
 
+        std::shared_ptr< ::view::AlRenderer >       al_renderer()       { return _al_renderer; }
+        std::shared_ptr< ::view::AlRenderer const > al_renderer() const { return _al_renderer; }
+
         std::shared_ptr< ::view::GlRenderer >       gl_renderer()       { return _gl_renderer; }
         std::shared_ptr< ::view::GlRenderer const > gl_renderer() const { return _gl_renderer; }
 
+      protected:
+        virtual void step( InputEventHandler::keyboard_event const& ) override;
+
       private:
         std::shared_ptr< ::view::GlRenderer > _gl_renderer;
-    };
+        std::shared_ptr< ::view::AlRenderer > _al_renderer;
+
+    }; // FlappyEngine
 
   } // controller::
 } // flappy_box::

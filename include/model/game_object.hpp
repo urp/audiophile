@@ -5,7 +5,6 @@
 # include <iostream>
 # include <map>
 # include <typeindex>
-# include "factory_map.hpp"
 
 namespace model
 {

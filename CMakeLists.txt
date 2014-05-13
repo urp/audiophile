@@ -59,10 +59,12 @@ add_executable( audiophile src/main.cpp
                            # view
                            src/view/glut_window.cpp
                            src/view/gl_renderer.cpp
+                           src/view/al_renderer.cpp
                            # flappy_box
                            src/flappy_box/model/box.cpp
                            src/flappy_box/controller/flappy_engine.cpp 
                            src/flappy_box/controller/box_object_logic.cpp 
+                           src/flappy_box/view/box_al_audible.cpp
                            src/flappy_box/view/box_gl_drawable.cpp
               )
 

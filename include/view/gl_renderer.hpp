@@ -2,6 +2,8 @@
 
 # include "model/game.hpp"
 
+# include "factory_map.hpp"
+
 # include <string>
 
 namespace view 

@@ -2,6 +2,9 @@
 
 # include "model/game.hpp"
 
+# include "math.hpp"
+# include "factory_map.hpp"
+
 # include <string>
 # include <AL/al.h>
 
@@ -18,7 +21,7 @@ namespace view
       struct Source
       {
         Source();
-        Source( const shared_ptr< Buffer >& );
+        Source( const std::shared_ptr< Buffer >& );
 
         ALuint m_al_handle;
 
@@ -28,7 +31,7 @@ namespace view
 
       struct Audible : public ::model::GameObject::Data
       {
-        virtual void auralize() = 0;
+        virtual void auralize( AlRenderer& ) = 0;
       };
 
       typedef factory_map< model::GameObject, Audible > delegate_factory_type;
@@ -42,7 +45,7 @@ namespace view
       delegate_factory_type&       audible_factory()       { return _audible_factory; }
       delegate_factory_type const& audible_factory() const { return _audible_factory; }
 
-      void auralize();
+      void auralize_model();
 
     private:
       std::string _name;

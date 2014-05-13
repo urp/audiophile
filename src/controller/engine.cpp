@@ -30,3 +30,13 @@ std::shared_ptr< const Logic > Engine::game_logic() const
 {
   return _logic;
 }
+
+void Engine::step( InputEventHandler::keyboard_event const& ev )
+{
+  game_logic()->advance_model( ev );
+}
+
+bool Engine::handle( ::controller::InputEventHandler::keyboard_event const& ev )
+{
+  step( ev );
+}
