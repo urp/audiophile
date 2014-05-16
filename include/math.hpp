@@ -1,4 +1,3 @@
-
 # pragma once
 
 # include <eigen3/Eigen/Core>
@@ -30,7 +29,7 @@ class sphere
     vec3_type getCenter() { return _center; }
     vec3_type getRadius() { return _radius; }
 
-    bool extend( const vec_type< T, Dim >& v )
+    bool extend( vec_type< T, Dim > const& v )
     {
       const auto diff_norm = ( v - _center ).norm();
       if( diff_norm > _radius ) 
@@ -61,13 +60,13 @@ class box
     bool valid() const 
     {
       return    std::isfinite( _min[0] ) && std::isfinite( _min[1] ) && std::isfinite( _min[2] )
-              && std::isfinite( _max[0] ) && std::isfinite( _max[1] ) && std::isfinite( _max[2] );
+             && std::isfinite( _max[0] ) && std::isfinite( _max[1] ) && std::isfinite( _max[2] );
     }
 
     vec3_type getMin() { return _min; }
     vec3_type getMax() { return _max; }
 
-    bool extend( const vec3_type& v )
+    bool extend( vec3_type const& v )
     {
       bool was_extended = false;
       for( unsigned int i = 0; i < Dim; ++i )
@@ -102,9 +101,7 @@ class convex_hull_2d
     const std::vector< vec_type<T,2> >& point_sequence() const { return _point_sequence; }
 
     //bool extend( const vec_type<T,2>& p )
-    
-    
+
   private:
-    
     std::vector< vec_type<T,2> > _point_sequence;
 };

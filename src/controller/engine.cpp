@@ -5,10 +5,9 @@ using namespace ::controller;
 Engine::Engine( const std::shared_ptr< Logic >& l
               , const std::shared_ptr< ::model::Game >& g 
               )
-: _model( g ), _logic( l )
-{
-
-}
+: _model( g )
+, _logic( l )
+{}
 
 std::shared_ptr< ::model::Game > Engine::game_model()
 {

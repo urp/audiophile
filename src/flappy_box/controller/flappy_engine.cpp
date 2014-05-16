@@ -18,8 +18,7 @@ FlappyEngine::FlappyEngine( const std::shared_ptr< ::controller::Logic >& l )
 : ::controller::GlutEngine( l )
 , _gl_renderer( std::make_shared< ::view::GlRenderer >( game_model() ) )
 , _al_renderer( std::make_shared< ::view::AlRenderer >( game_model() ) )
-{
-}
+{}
 
 void FlappyEngine::init( int& argc, char** argv )
 {
@@ -38,7 +37,7 @@ void FlappyEngine::init( int& argc, char** argv )
 void FlappyEngine::run()
 {
   // Create a window and connect it with a view::GlRenderer and an InputEventHandler.
- auto window = std::make_shared< ::view::GlutWindow >( "flappy_box", 500,500, gl_renderer() , shared_from_this() );
+  auto window = std::make_shared< ::view::GlutWindow >( "flappy_box", 500,500, gl_renderer() , shared_from_this() );
 
   // run game
   GlutEngine::run();

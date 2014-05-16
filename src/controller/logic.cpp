@@ -2,9 +2,7 @@
 
 using namespace ::controller;
 
-Logic::Logic( const std::shared_ptr< ::model::Game >& g )
-: _model( g )
-{ }
+Logic::Logic( const std::shared_ptr< ::model::Game >& g ) : _model( g ) {}
 
 bool Logic::advance_model( const ::controller::InputEventHandler::keyboard_event& ev )
 {
