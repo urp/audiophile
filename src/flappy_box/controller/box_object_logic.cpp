@@ -17,24 +17,25 @@ bool BoxObjectLogic::advance( ::controller::Logic& l, ::controller::InputEventHa
   _model->setAngle( new_angle );
 
   double timestep_sec = l.game_model()->timestep().count();
-  const vec3_type gravity( 0.,0., -2. );
-  static vec3_type flapping( 0.,0., 0.0 );
 
-  flapping[2] -= 10 * flapping[2] * timestep_sec;
+  vec3_type acceleration = _model->acceleration();
+  acceleration -= 10 * acceleration * timestep_sec;
+
   if( ev.key == ::controller::InputEventHandler::keyboard_event::KEY_A )
   {
-    flapping[2] += 20.;
+    acceleration[2] += 20.;
     std::cout << "flappy_box::controller::BoxObjectLogic::handle: Key A pressed." << std::endl;
   }
 
   // Euler integration
-  _model->setVelocity( _model->velocity() + ( gravity + flapping ) * timestep_sec );
+  const vec3_type gravity( 0.,0., -2. );
+  _model->setAcceleration( acceleration );
+  _model->setVelocity( _model->velocity() + ( _model->acceleration() + gravity ) * timestep_sec );
   _model->setPosition( _model->position() + _model->velocity() * timestep_sec );
 
   std::cout << "flappy_box::controller::BoxObjectLogic::advance:"
-            << " dt  " << timestep_sec << " flap " << flapping[2]<< std::endl
-            << " pos " << std::endl << _model->position() << std::endl
-            << " vel " << std::endl << _model->velocity() << std::endl;
+            << " dt  " << timestep_sec << " p " << _model->position()[2] << " v " << _model->velocity()[2] <<  " a " << acceleration[2]
+            << std::endl;
 
   return false;
 }

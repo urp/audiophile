@@ -2,6 +2,8 @@
 
 # include "controller/engine.hpp"
 
+# include <GL/freeglut.h>
+
 # include <chrono>
 
 namespace controller 
@@ -17,8 +19,6 @@ namespace controller
     private:
       const unsigned int _prefered_timestep_millisec = 30;
 
-    
-      
   }; // GlutEngine
 
 } // controller::

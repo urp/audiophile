@@ -3,30 +3,30 @@
 # include <map>
 # include <typeindex>
 
-template< typename In, typename Out >
+template< typename InBase, typename Out >
 class factory_map
 {
-    typedef std::function< std::shared_ptr< Out > ( const std::shared_ptr< In >& ) > outer_function_type;
+    typedef std::function< std::shared_ptr< Out > ( const std::shared_ptr< InBase >& ) > outer_function_type;
 
   public:
 
-    // Register factory module for key/input type T.
-    template< typename T >
-    void register_module( const std::function< std::shared_ptr< Out > ( const std::shared_ptr< T >& ) >& inner_function )
+    // Register factory module for key/input type In.
+    template< typename In >
+    void register_module( const std::function< std::shared_ptr< Out > ( const std::shared_ptr< In >& ) >& inner_function )
     {
-      auto outer_function = [inner_function]( const std::shared_ptr< In >& in ) -> std::shared_ptr< Out >
+      auto outer_function = [inner_function]( const std::shared_ptr< InBase >& in ) -> std::shared_ptr< Out >
                             {
-                              static_assert( std::is_base_of< In, T >::value, "Key Type \"T\" must derive from factory_maps template parameter \"In\"." );
-                              auto derived_in = std::static_pointer_cast< T >( in );
+                              static_assert( std::is_base_of< InBase, In >::value, "Key type \"In\" must derive from factory_maps template parameter \"InBase\"." );
+                              auto derived_in = std::static_pointer_cast< In >( in );
                               return inner_function( derived_in );
                             };
-      auto ins_result = _modules.insert( { typeid( T ), outer_function } );
+      auto ins_result = _modules.insert( { typeid( In ), outer_function } );
       if( not ins_result.second )
-        throw std::logic_error( "factory_map::register_module: A module with key " + std::string( typeid( T ).name() ) + " is already registered." );
+        throw std::logic_error( "factory_map::register_module: A module with key \"" + std::string( typeid( In ).name() ) + "\" is already registered." );
     }
 
     // Call module for derived type of *in.
-    std::shared_ptr< Out > create_for( const std::shared_ptr< In >& in )
+    std::shared_ptr< Out > create_for( const std::shared_ptr< InBase >& in )
     {
       auto found = _modules.find( typeid( *in ) );
       if( found == _modules.end() )

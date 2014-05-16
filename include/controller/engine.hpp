@@ -29,7 +29,8 @@ namespace controller
       // Calls everything we need to advance the game.
       // Override to integrate new behavior.
       virtual void step( InputEventHandler::keyboard_event const& ev );
-      // Implement InputEventHandler. Simply calls function step with the keyboard_event provided by GLUT
+      // Implement InputEventHandler. Simply calls function step with the keyboard_event provided by GLUT.
+      // Override to change event distribution and processing.
       virtual bool handle( ::controller::InputEventHandler::keyboard_event const& ev );
     private:
       std::shared_ptr< model::Game > _model;

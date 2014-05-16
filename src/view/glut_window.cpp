@@ -15,8 +15,8 @@ GlutWindow::GlutWindow( const std::string& name, size_t width, size_t height, co
 , _input_event_handler( h )
 {
   // GLUT GlutWindow Initialization:
-  glutInitWindowSize( width, height);
-  glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+  glutInitWindowSize( width, height );
+  glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );
 
   _glut_win_id = glutCreateWindow( name.c_str() );
   if( _glut_win_id < 1 ) 
@@ -28,6 +28,7 @@ GlutWindow::GlutWindow( const std::string& name, size_t width, size_t height, co
   glutDisplayFunc( glutDraw );
   glutReshapeFunc( glutReshape );
   glutKeyboardFunc( glutKeyboard );
+  glutCloseFunc( glutClose );
 }
 
 GlutWindow::~GlutWindow()
@@ -64,7 +65,7 @@ unsigned int GlutWindow::height() const
 }
 
 
-std::shared_ptr< const GlRenderer > GlutWindow::renderer() const
+std::shared_ptr< GlRenderer const > GlutWindow::renderer() const
 { 
   return _renderer; 
 }
@@ -74,15 +75,14 @@ std::shared_ptr< ::controller::InputEventHandler > GlutWindow::input_event_handl
   return _input_event_handler;
 }
 
-std::shared_ptr< const ::controller::InputEventHandler > GlutWindow::input_event_handler() const
+std::shared_ptr< ::controller::InputEventHandler const > GlutWindow::input_event_handler() const
 {
   return _input_event_handler;
 }
 
-
 void GlutWindow::glutDraw() 
-{ 
-  GlutWindow* win = static_cast< GlutWindow* >( glutGetWindowData() );
+{
+  GlutWindow* win = reinterpret_cast< GlutWindow* >( glutGetWindowData() );
   if( win )
   {
     win->renderer()->visualize_model( *win );
@@ -92,7 +92,7 @@ void GlutWindow::glutDraw()
 
 void GlutWindow::glutReshape( int width, int height )
 {
-  GlutWindow* win = static_cast< GlutWindow* >( glutGetWindowData() );
+  GlutWindow* win = reinterpret_cast< GlutWindow* >( glutGetWindowData() );
   if( win ) 
   {
     win->_width = width;
@@ -102,11 +102,14 @@ void GlutWindow::glutReshape( int width, int height )
   else throw std::out_of_range( "view::GlutWindow::glutReshape: Could not get pointer to GlutWindow." );
 }
 
-void GlutWindow::glutKeyboard(unsigned char glut_key, int mouse_x, int mouse_y)
+void GlutWindow::glutKeyboard( unsigned char glut_key, int mouse_x, int mouse_y )
 {
-  GlutWindow* win = static_cast< GlutWindow* >( glutGetWindowData() );
+  GlutWindow* win = reinterpret_cast< GlutWindow* >( glutGetWindowData() );
   if( not win )
     throw std::out_of_range( "view::GlutWindow::glutKeyboard: Could not get pointer to GlutWindow." );
+
+  if( not win->input_event_handler() )
+    std::clog << "view::GlutWindow::glutKeyboard: no InputEventHandler attached (which could handle the event)." << std::endl;
 
   controller::InputEventHandler::keyboard_event ev;
   typedef controller::InputEventHandler::keyboard_event event_type;
@@ -197,12 +200,22 @@ void GlutWindow::glutKeyboard(unsigned char glut_key, int mouse_x, int mouse_y)
   win->input_event_handler()->handle( ev );
 }
 
+void GlutWindow::glutClose() 
+{ 
+  GlutWindow* win = reinterpret_cast< GlutWindow* >( glutGetWindowData() );
+  if( win )
+  {
+    win->renderer()->visualize_model( *win );
+  }
+  else throw std::out_of_range( "view::GlutWindow::glutClose: Could not get pointer to GlutWindow." );
+}
+
 std::shared_ptr< GlRenderer > GlutWindow::renderer()
 {
   return _renderer;
 }
 
-void GlutWindow::setRenderer(const std::shared_ptr< GlRenderer >& r)
+void GlutWindow::setRenderer( const std::shared_ptr< GlRenderer >& r )
 {
   if( not r ) throw std::logic_error( "::view::GlutWindow::setRenderer: Invalid renderer." );
   _renderer = r;

@@ -25,16 +25,18 @@ namespace flappy_box
         const vec3_type& velocity() const { return _velocity; }
         void setVelocity( const vec3_type& v ) { _velocity = v; }
 
-      private:
+        const vec3_type& acceleration() const { return _acceleration; }
+        void setAcceleration( const vec3_type& a ) { _acceleration = a; }
+
+    private:
 
         double _angle;
 
         vec3_type _position;
         vec3_type _velocity;
+        vec3_type _acceleration;
 
-        
-
-    }; // DefaultGameObject
+    }; // Box
 
   } // model::
-} // audiophile::
+} // flappy_box::

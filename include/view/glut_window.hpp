@@ -36,6 +36,7 @@ namespace view
       static void glutDraw(); 
       static void glutReshape( int width, int height );
       static void glutKeyboard( unsigned char glut_key, int mouse_x, int mouse_y );
+      static void glutClose();
 
       std::string _name;
       size_t      _width;

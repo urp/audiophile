@@ -11,13 +11,15 @@ BoxGlDrawable::BoxGlDrawable(const std::shared_ptr< model::Box >& b )
 {}
 
 
-void BoxGlDrawable::visualize( ::view::GlRenderer&, ::view::GlutWindow& )
+void BoxGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& )
 {
+  double timestep_sec = r.game_model()->timestep().count();
+
   glPushMatrix();
   {
     std::chrono::milliseconds rotation_interval( 5000 );
     double angle = _model->angle();
-    const vec3_type pos = _model->position();
+    const vec3_type& pos = _model->position();
     glTranslated( pos[0], pos[1], pos[2] );
     glRotated( angle, 0., 0., 1. );
     glColor3f( .5,.5,.5 );
