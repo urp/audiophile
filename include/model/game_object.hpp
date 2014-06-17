@@ -29,10 +29,8 @@ namespace model
       template< typename DataType >
       std::shared_ptr< DataType > getData();
 
-//      virtual sphere< distance_type, 2 > getBoundingSphere() const = 0;
-//      virtual box< distance_type, 2 >    getBoundingBox()    const = 0;
-//      virtual convex_hull_2d< distance_type > getConvexHull()     const = 0;
-
+      // dynamic flag can be used to mark object as static/dynamic in the game.
+      // (this can be used as a hint to the game logic, indicating if object needs to be "advanced")
       bool is_dynamic() const { return _dynamic_flag; }
 
       const std::string& name() const { return _name; }

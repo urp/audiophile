@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required( VERSION 2.8 )
 
 project(audiophile)
 
@@ -25,6 +25,13 @@ include_directories(${GLUT_INCLUDE_DIRS})
 link_directories(${GLUT_LIBRARY_DIRS})
 add_definitions(${GLUT_DEFINITIONS})
 
+#########################################################
+# FIND GLEW
+#########################################################
+find_package(GLEW REQUIRED)
+include_directories(${GLEW_INCLUDE_DIRS})
+link_directories(${GLEW_LIBRARY_DIRS})
+add_definitions(${GLEW_DEFINITIONS})
 
 #########################################################
 # FIND OPENAL
@@ -41,9 +48,6 @@ add_definitions(${OPENAL_DEFINITIONS})
  include_directories(${ALUT_INCLUDE_DIRS})
  link_directories(${ALUT_LIBRARY_DIRS})
  add_definitions(${ALUT_DEFINITIONS})
- if(NOT ALUT_FOUND)
- message(ERROR " ALUT not found!")
- endif(NOT ALUT_FOUND)
 
 #########################################################
 # EXECUTABLE AUDIOphile
@@ -51,6 +55,7 @@ add_definitions(${OPENAL_DEFINITIONS})
 
 add_executable( audiophile src/main.cpp
                            # model
+                           src/model/game.cpp
                            src/model/game_object.cpp
                            # controller
                            src/controller/engine.cpp
@@ -62,12 +67,15 @@ add_executable( audiophile src/main.cpp
                            src/view/al_renderer.cpp
                            # flappy_box
                            src/flappy_box/model/box.cpp
+                           src/flappy_box/model/tube.cpp
                            src/flappy_box/controller/flappy_engine.cpp 
                            src/flappy_box/controller/box_object_logic.cpp 
+                           src/flappy_box/controller/tube_object_logic.cpp 
                            src/flappy_box/view/box_al_audible.cpp
                            src/flappy_box/view/box_gl_drawable.cpp
+                           src/flappy_box/view/tube_gl_drawable.cpp
               )
 
-target_link_libraries( audiophile ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${OPENAL_LIBRARY} ${ALUT_LIBRARY} )
+target_link_libraries( audiophile ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARY} ${OPENAL_LIBRARY} ${ALUT_LIBRARY} )
 
 install(TARGETS audiophile RUNTIME DESTINATION bin)

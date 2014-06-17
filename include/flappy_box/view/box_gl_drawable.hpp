@@ -12,12 +12,13 @@ namespace flappy_box
     {
       public:
 
-        BoxGlDrawable( const std::shared_ptr< model::Box >& );
+        BoxGlDrawable( std::shared_ptr< model::Box > const& );
 
         virtual void visualize( ::view::GlRenderer&, ::view::GlutWindow& ) override;
 
       private:
-        std::shared_ptr< model::Box > _model;
-    };
+        std::shared_ptr< model::Box const > _box;
+
+    }; // BoxGlDrawable
   }
 }

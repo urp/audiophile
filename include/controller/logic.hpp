@@ -6,7 +6,6 @@
 
 # include "factory_map.hpp"
 
-
 namespace controller
 {
   class Logic

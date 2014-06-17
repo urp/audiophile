@@ -1,25 +1,25 @@
 # pragma once
 
 # include "controller/logic.hpp"
-# include "flappy_box/model/box.hpp"
+# include "flappy_box/model/tube.hpp"
 
 namespace flappy_box
 {
   namespace controller
   {
 
-    class BoxObjectLogic : public ::controller::Logic::ObjectLogic
+    class TubeObjectLogic : public ::controller::Logic::ObjectLogic
     {
       public:
-        BoxObjectLogic() = delete;
-        BoxObjectLogic( const std::shared_ptr< model::Box >& );
+        TubeObjectLogic() = delete;
+        TubeObjectLogic( const std::shared_ptr< model::Tube >& );
 
         virtual bool advance( ::controller::Logic&, ::controller::InputEventHandler::keyboard_event const & ) override;
 
       private:
-        std::shared_ptr< model::Box > _model;
+        std::shared_ptr< model::Tube > _model;
 
-    }; // BoxObjectLogic
+    }; // TubeObjectLogic
 
   } // controller::
 

@@ -4,8 +4,6 @@
 
 # include "factory_map.hpp"
 
-# include <string>
-
 namespace view 
 {
   class GlutWindow;
@@ -21,20 +19,19 @@ namespace view
       typedef factory_map< model::GameObject, Drawable > delegate_factory_type;
 
       GlRenderer() = delete;
-      GlRenderer( const std::shared_ptr< const model::Game >& );
+      GlRenderer( std::shared_ptr< model::Game const > const& );
 
-      std::shared_ptr< const model::Game > game_model() const;
+      std::shared_ptr< model::Game const > const& game_model() const;
 
       /// Return factory creating Drawable delegates.
-      delegate_factory_type&       drawable_factory()       { return _drawable_factory; }
-      delegate_factory_type const& drawable_factory() const { return _drawable_factory; }
+      delegate_factory_type&       drawable_factory();
+      delegate_factory_type const& drawable_factory() const;
 
-      virtual void initialize( GlutWindow& );
       virtual void visualize_model( GlutWindow& );
       virtual void resize( GlutWindow& );
 
     private:
-      std::shared_ptr< const model::Game > _game_model;
+      std::shared_ptr< model::Game const > _game_model;
       delegate_factory_type _drawable_factory;
 
   }; // GlRenderer

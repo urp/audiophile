@@ -10,31 +10,35 @@ GlRenderer::GlRenderer( std::shared_ptr< model::Game const > const& g )
 : _game_model( g )
 {}
 
-std::shared_ptr< ::model::Game const > GlRenderer::game_model() const
+std::shared_ptr< ::model::Game const > const& GlRenderer::game_model() const
 {
   return _game_model;
 }
 
-void GlRenderer::initialize( GlutWindow& win )
+GlRenderer::delegate_factory_type& GlRenderer::drawable_factory()
 {
-  resize( win );
-  visualize_model( win );
+  return _drawable_factory;
+}
+
+GlRenderer::delegate_factory_type const& GlRenderer::drawable_factory() const
+{
+  return _drawable_factory;
 }
 
 void GlRenderer::visualize_model( GlutWindow& w )
 {
-  glClearColor( 0.1, 0.2, 0.3, 1.);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glMatrixMode(GL_MODELVIEW);
+  glClearColor( .1,.2,.3, 1. );
+  glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+  glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
-  gluLookAt( 0,-7,0, 0,0,0, 0,0,1 );
+  gluLookAt( 0,-20,0, 0,0,0, 0,0,1 );
 
   for( auto o : game_model()->objects() )
   {
     auto drawable = o->getData< Drawable >();
     if( not drawable )
     {
-      std::clog << "::view::GlRenderer::draw: Adding new Drawable for \"" << o->name() << "\"." << std::endl;
+      std::clog << "::view::GlRenderer::visualize_model: Adding new Drawable for \"" << o->name() << "\"." << std::endl;
       drawable = _drawable_factory.create_for( o );
       o->registerData( drawable );
     }
@@ -48,7 +52,7 @@ void GlRenderer::visualize_model( GlutWindow& w )
 void GlRenderer::resize( GlutWindow& win ) 
 {
   glViewport( 0,0, win.width(), win.height() );
-  glMatrixMode(GL_PROJECTION); //Switch to setting the camera perspective
+  glMatrixMode( GL_PROJECTION );
   glLoadIdentity(); //Reset the camera
-  gluPerspective( 45., win.width() / double( win.height() ), .5, 100. );
+  gluPerspective( 45., win.width() / double( win.height() ), .5, 300. );
 }

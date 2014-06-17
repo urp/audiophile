@@ -1,8 +1,8 @@
 # include "view/glut_window.hpp"
 
+# include <GL/glew.h>
 # include <GL/freeglut.h>
 
-# include <stdexcept>
 # include <iostream>
 
 using namespace ::view;
@@ -19,13 +19,20 @@ GlutWindow::GlutWindow( const std::string& name, size_t width, size_t height, co
   glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );
 
   _glut_win_id = glutCreateWindow( name.c_str() );
-  if( _glut_win_id < 1 ) 
+  if( is_closed() ) 
     throw std::logic_error( "::view::GlutWindow::GlutWindow: Could not create GLUT window." );
+
+  GLenum err = glewInit();
+  if (GLEW_OK != err)
+  {
+    /* Problem: glewInit failed, something is seriously wrong. */
+    std::fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+  }
 
   glutSetWindowData( this );
 
   // setup callbacks
-  glutDisplayFunc( glutDraw );
+  glutDisplayFunc( glutDisplay );
   glutReshapeFunc( glutReshape );
   glutKeyboardFunc( glutKeyboard );
   glutCloseFunc( glutClose );
@@ -33,20 +40,27 @@ GlutWindow::GlutWindow( const std::string& name, size_t width, size_t height, co
 
 GlutWindow::~GlutWindow()
 {
-  ensureCurrent();
-  glutSetWindowData( nullptr );
-  glutDestroyWindow( _glut_win_id );
+  close();
 }
 
 void GlutWindow::invalidate()
 {
+  if( is_closed() )
+  {
+    std::clog << "view::GlutWindow::ensureCurrent: Window was already closed." << std::endl;
+    return;
+  }
   ensureCurrent();
   glutPostRedisplay();
 }
 
-
 void GlutWindow::ensureCurrent() const
 {
+  if( is_closed() )
+  {
+    std::clog << "view::GlutWindow::ensureCurrent: Window was already closed." << std::endl;
+    return;
+  }
   if( _glut_win_id != glutGetWindow() ) 
   {
     std::clog << "view::GlutWindow::ensureCurrent: Switching to window " << _name << " with id " << _glut_win_id << "…" << std::endl;
@@ -64,7 +78,6 @@ unsigned int GlutWindow::height() const
   return _height;
 }
 
-
 std::shared_ptr< GlRenderer const > GlutWindow::renderer() const
 { 
   return _renderer; 
@@ -80,26 +93,40 @@ std::shared_ptr< ::controller::InputEventHandler const > GlutWindow::input_event
   return _input_event_handler;
 }
 
-void GlutWindow::glutDraw() 
+bool GlutWindow::is_closed() const
+{
+  return _glut_win_id <= 0;
+}
+
+void GlutWindow::close()
+{
+  if( is_closed() )
+  {
+    std::clog << "view::GlutWindow::close: Window was already closed." << std::endl;
+    return;
+  }
+  glutDestroyWindow( _glut_win_id );
+  _glut_win_id = -1;
+}
+
+void GlutWindow::glutDisplay() 
 {
   GlutWindow* win = reinterpret_cast< GlutWindow* >( glutGetWindowData() );
-  if( win )
-  {
-    win->renderer()->visualize_model( *win );
-  }
-  else throw std::out_of_range( "view::GlutWindow::glutDraw: Could not get pointer to GlutWindow." );
+  if( not win )
+    throw std::out_of_range( "view::GlutWindow::glutDraw: Could not get pointer to GlutWindow." );
+
+  win->renderer()->visualize_model( *win );
 }
 
 void GlutWindow::glutReshape( int width, int height )
 {
   GlutWindow* win = reinterpret_cast< GlutWindow* >( glutGetWindowData() );
-  if( win ) 
-  {
-    win->_width = width;
-    win->_height= height;
-    win->renderer()->resize( *win ); 
-  }
-  else throw std::out_of_range( "view::GlutWindow::glutReshape: Could not get pointer to GlutWindow." );
+  if( not win ) 
+    throw std::out_of_range( "view::GlutWindow::glutReshape: Could not get pointer to GlutWindow." );
+
+  win->_width = width;
+  win->_height= height;
+  win->renderer()->resize( *win ); 
 }
 
 void GlutWindow::glutKeyboard( unsigned char glut_key, int mouse_x, int mouse_y )
@@ -112,89 +139,15 @@ void GlutWindow::glutKeyboard( unsigned char glut_key, int mouse_x, int mouse_y 
     std::clog << "view::GlutWindow::glutKeyboard: no InputEventHandler attached (which could handle the event)." << std::endl;
 
   controller::InputEventHandler::keyboard_event ev;
-  typedef controller::InputEventHandler::keyboard_event event_type;
-  switch( glut_key )
-  {
-    case '0': ev.key = event_type::KEY_0; break;
-    case '1': ev.key = event_type::KEY_1; break;
-    case '2': ev.key = event_type::KEY_2; break;
-    case '3': ev.key = event_type::KEY_3; break;
-    case '4': ev.key = event_type::KEY_4; break;
-    case '5': ev.key = event_type::KEY_5; break;
-    case '6': ev.key = event_type::KEY_6; break;
-    case '7': ev.key = event_type::KEY_7; break;
-    case '8': ev.key = event_type::KEY_8; break;
-    case '9': ev.key = event_type::KEY_9; break;
-
-    case 'q': ev.key = event_type::KEY_Q; break;
-    case 'w': ev.key = event_type::KEY_W; break;
-    case 'e': ev.key = event_type::KEY_E; break;
-    case 'r': ev.key = event_type::KEY_R; break;
-    case 't': ev.key = event_type::KEY_T; break;
-    case 'z': ev.key = event_type::KEY_Z; break;
-    case 'u': ev.key = event_type::KEY_U; break;
-    case 'i': ev.key = event_type::KEY_I; break;
-    case 'o': ev.key = event_type::KEY_O; break;
-    case 'p': ev.key = event_type::KEY_P; break;
-    case 'a': ev.key = event_type::KEY_A; break;
-    case 's': ev.key = event_type::KEY_S; break;
-    case 'd': ev.key = event_type::KEY_D; break;
-    case 'f': ev.key = event_type::KEY_F; break;
-    case 'g': ev.key = event_type::KEY_G; break;
-    case 'h': ev.key = event_type::KEY_H; break;
-    case 'j': ev.key = event_type::KEY_J; break;
-    case 'k': ev.key = event_type::KEY_K; break;
-    case 'l': ev.key = event_type::KEY_L; break;
-    case 'y': ev.key = event_type::KEY_Y; break;
-    case 'x': ev.key = event_type::KEY_X; break;
-    case 'c': ev.key = event_type::KEY_C; break;
-    case 'v': ev.key = event_type::KEY_V; break;
-    case 'b': ev.key = event_type::KEY_B; break;
-    case 'n': ev.key = event_type::KEY_N; break;
-    case 'm': ev.key = event_type::KEY_M; break;
-
-    // key above tab case '': ev.key = event_type::KEY_; break;
-    //case '°': ev.key = event_type::KEY_DEGREE; break;
-    case '!': ev.key = event_type::KEY_EXCLAMATION_MARK; break;
-    case '\"': ev.key = event_type::KEY_BACKSLASH; break;
-    //case '§': ev.key = event_type::KEY_PARAGRAPH; break;
-    case '$': ev.key = event_type::KEY_DOLLAR; break;
-    case '%': ev.key = event_type::KEY_PERCENT; break;
-    case '&': ev.key = event_type::KEY_AND; break;
-    case '/': ev.key = event_type::KEY_SLASH; break;
-    case '{': ev.key = event_type::KEY_CURLY_OPEN; break;
-    case '(': ev.key = event_type::KEY_PARENTHESIS_OPEN; break;
-    case '[': ev.key = event_type::KEY_BRACKET_OPEN; break;
-    case ')': ev.key = event_type::KEY_PARENTHESIS_CLOSE; break;
-    case ']': ev.key = event_type::KEY_BRACKET_CLOSE; break;
-    case '=': ev.key = event_type::KEY_EQUAL; break;
-    case '}': ev.key = event_type::KEY_CURLY_CLOSE; break;
-    case '?': ev.key = event_type::KEY_QUESTION_MARK; break;
-    case '\\': ev.key = event_type::KEY_BACKSLASH; break;
-    // TODO case '\'': ev.key = event_type::KEY_; break;
-    // TODO case '`': ev.key = event_type::KEY_; break;
-    // TODO case '¸': ev.key = event_type::KEY_; break;
-
-    case '*': ev.key = event_type::KEY_TIMES; break;
-    case '+': ev.key = event_type::KEY_PLUS; break;
-    case '~': ev.key = event_type::KEY_TILDE; break;
-    case '#': ev.key = event_type::KEY_HASH; break;
-    // TODO case '\'': ev.key = event_type::KEY_; break;
-
-    case ',': ev.key = event_type::KEY_COMMA; break;
-    case ';': ev.key = event_type::KEY_SEMICOLON; break;
-    case '.': ev.key = event_type::KEY_SENTENCE_MARK; break;
-    case ':': ev.key = event_type::KEY_COLON; break;
-    case '-': ev.key = event_type::KEY_MINUS; break;
-    // TODO case '_': ev.key = event_type::KEY_; break;
-
-    // TODO case '<': ev.key = event_type::KEY_; break;
-    // TODO case '>': ev.key = event_type::KEY_; break;
-    // TODO case '|': ev.key = event_type::KEY_; break;
-
-    default: throw std::out_of_range( "::view::GlutWindow::glutKeyboard: unsupported key." );
-  }
-
+  ev.key = glut_key;
+  ev.mouse_pos[0] = mouse_x;
+  ev.mouse_pos[1] = mouse_y;
+  int glut_modifiers = glutGetModifiers();
+  controller::InputEventHandler::keyboard_event::modifier_mask_type modifier_mask = 0;
+  if( glut_modifiers & GLUT_ACTIVE_SHIFT ) modifier_mask |= controller::InputEventHandler::keyboard_event::SHIFT_ACTIVE;
+  if( glut_modifiers & GLUT_ACTIVE_CTRL  ) modifier_mask |= controller::InputEventHandler::keyboard_event:: CTRL_ACTIVE;
+  if( glut_modifiers & GLUT_ACTIVE_ALT   ) modifier_mask |= controller::InputEventHandler::keyboard_event::  ALT_ACTIVE;
+  ev.modifier_mask = modifier_mask;
   //TODO: fill event with more keys & infos
 
   win->input_event_handler()->handle( ev );
@@ -203,11 +156,16 @@ void GlutWindow::glutKeyboard( unsigned char glut_key, int mouse_x, int mouse_y 
 void GlutWindow::glutClose() 
 { 
   GlutWindow* win = reinterpret_cast< GlutWindow* >( glutGetWindowData() );
-  if( win )
+  if( not win )
+    throw std::out_of_range( "view::GlutWindow::glutClose: Could not get pointer to GlutWindow." );
+
+  if( win->is_closed() )
   {
-    win->renderer()->visualize_model( *win );
+    std::clog << "view::GlutWindow::glutClose: Window was already closed." << std::endl;
+    return;
   }
-  else throw std::out_of_range( "view::GlutWindow::glutClose: Could not get pointer to GlutWindow." );
+
+  win->_glut_win_id = -1;
 }
 
 std::shared_ptr< GlRenderer > GlutWindow::renderer()
@@ -219,7 +177,4 @@ void GlutWindow::setRenderer( const std::shared_ptr< GlRenderer >& r )
 {
   if( not r ) throw std::logic_error( "::view::GlutWindow::setRenderer: Invalid renderer." );
   _renderer = r;
-
-  ensureCurrent();
-  r->initialize( *this );
 }

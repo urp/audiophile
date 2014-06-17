@@ -3,13 +3,10 @@
 # include "view/gl_renderer.hpp"
 # include "controller/input_event_handler.hpp"
 
-# include <memory>
 # include <string>
 
 namespace view
 {
-  // forward
-  class GlRenderer;
 
   class GlutWindow
   {
@@ -22,18 +19,25 @@ namespace view
       unsigned int height() const;
 
       std::shared_ptr< GlRenderer > renderer();
-      std::shared_ptr< const GlRenderer > renderer() const;
-      void setRenderer( const std::shared_ptr< GlRenderer >& );
+      std::shared_ptr< GlRenderer const > renderer() const;
+      void setRenderer( std::shared_ptr< GlRenderer > const& );
 
       std::shared_ptr< controller::InputEventHandler > input_event_handler();
-      std::shared_ptr< const controller::InputEventHandler > input_event_handler() const;
+      std::shared_ptr< controller::InputEventHandler const > input_event_handler() const;
 
+      // Request window redisplay.
       void invalidate();
 
+      // Indicates if window was already closed.
+      bool is_closed() const;
+      // Allows to manually close the window before the destructor is called.
+      void close();
+
     private:
+      // make sure this Window is the current GLUT Window.
       void ensureCurrent() const;
 
-      static void glutDraw(); 
+      static void glutDisplay(); 
       static void glutReshape( int width, int height );
       static void glutKeyboard( unsigned char glut_key, int mouse_x, int mouse_y );
       static void glutClose();
@@ -44,7 +48,6 @@ namespace view
       int         _glut_win_id;
 
       std::shared_ptr< GlRenderer > _renderer;
-
       std::shared_ptr< controller::InputEventHandler > _input_event_handler;
 
   }; // GlutWindow
