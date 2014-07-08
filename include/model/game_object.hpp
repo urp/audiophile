@@ -33,11 +33,15 @@ namespace model
       // (this can be used as a hint to the game logic, indicating if object needs to be "advanced")
       bool is_dynamic() const { return _dynamic_flag; }
 
+      bool is_marked_as_deleted() const { return _deleted_flag; }
+      void setMarkedAsDeleted( bool del = true ) { _deleted_flag = true; }
+
       const std::string& name() const { return _name; }
 
     private:
 
       bool _dynamic_flag;
+      bool _deleted_flag;
       std::map< std::type_index, std::shared_ptr< Data > > _data; 
       std::string _name;
 

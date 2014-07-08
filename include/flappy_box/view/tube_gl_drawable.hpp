@@ -26,7 +26,8 @@ namespace flappy_box
         void updateWallPoints( std::size_t, flappy_box::model::Tube::control_point_map_type::const_iterator const& );
         void drawWallPoints();
         void updateWallSurface( std::size_t, flappy_box::model::Tube::control_point_map_type::const_iterator const& );
-        void drawWallSurface();
+        void drawWallSurface( std::chrono::duration< double > const& );
+        void drawWallSurfaceWithShaders( std::chrono::duration< double > const& t );
 
         std::shared_ptr< model::Tube const > _model;
 
@@ -40,8 +41,10 @@ namespace flappy_box
         std::vector< std::vector< std::array< double, 3 > > > p_segment_samples;
 
         std::vector< GLuint > s_segment_vbos;
+        std::vector< GLuint > s_normal_vbos;
         std::vector< std::vector< std::array< double, 3 > > > s_segment_samples;
-        
+        std::vector< std::vector< std::array< double, 3 > > > s_normal_samples;
+
     }; // TubeGlDrawable
   }
 }

@@ -6,11 +6,16 @@
 # include <vector>
 # include <memory>
 
+namespace controller
+{
+  class Logic;
+}
+
 namespace model
 {
-
   class Game
   {
+      friend class ::controller::Logic;
     public:
 
       Game();
@@ -25,12 +30,12 @@ namespace model
       std::chrono::duration< double > const&       timestep() const;
       std::chrono::duration< double > const&       runtime() const;
 
-  private:
-    std::vector< std::shared_ptr< GameObject > > _objects;
-    std::chrono::steady_clock::time_point        _timestamp;
-    std::chrono::duration< double >              _timestep;
-    std::chrono::duration< double >              _runtime;
-    
+    private:
+      std::vector< std::shared_ptr< GameObject > > _objects;
+      std::chrono::steady_clock::time_point        _timestamp;
+      std::chrono::duration< double >              _timestep;
+      std::chrono::duration< double >              _runtime;
+
   }; // Game
 
 } // model::

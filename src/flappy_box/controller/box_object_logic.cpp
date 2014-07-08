@@ -38,18 +38,20 @@ bool BoxObjectLogic::advance( ::controller::Logic& l, ::controller::InputEventHa
   _model->setPosition( _model->position() + _model->velocity() * timestep_sec );
 
   // Collision check
-
-  auto tube_bounds = _model->tube_object()->getVerticalBoundsAt( timestamp );
-  if( not tube_bounds.first )
-    throw std::out_of_range( "flappy_box::controller::BoxObjectLogic::advance: Unable to determine collision bounds.");
-
-  std::cout << "flappy_box::controller::BoxObjectLogic::advance: collision check tube_bounds (" << tube_bounds.second.first << ", " << tube_bounds.second.second << ")." << std::endl;
-
+  model::Tube::control_point_type  tube_bounds;
+  try
+  { tube_bounds = _model->tube_object()->getVerticalBoundsAt( timestamp ); }
+  catch( std::out_of_range e )
+  {
+    std::cerr << "flappy_box::controller::BoxObjectLogic::advance: Unable to determine collision bounds: " << e.what() << std::endl;
+    return false;
+  }
+  std::cout << "flappy_box::controller::BoxObjectLogic::advance: collision check tube_bounds (" << tube_bounds.first << ", " << tube_bounds.second << ")." << std::endl;
   const double bounce_factor = -.5;
 
-  if( _model->position()[2] - .5 * _model->diameter() < tube_bounds.second.first )
+  if( _model->position()[2] - .5 * _model->diameter() < tube_bounds.first )
   { auto pos = _model->position();
-    pos[2] = tube_bounds.second.first + .55 * _model->diameter();
+    pos[2] = tube_bounds.first + .55 * _model->diameter();
     _model->setPosition( pos );
     auto vel = _model->velocity();
     vel[2] *= bounce_factor;
@@ -59,9 +61,9 @@ bool BoxObjectLogic::advance( ::controller::Logic& l, ::controller::InputEventHa
     _model->setAcceleration( acc );
   }
 
-  if( _model->position()[2] + .5 * _model->diameter() > tube_bounds.second.second )
+  if( _model->position()[2] + .5 * _model->diameter() > tube_bounds.second )
   { auto pos = _model->position();
-    pos[2] = tube_bounds.second.second - .55 * _model->diameter();
+    pos[2] = tube_bounds.second - .55 * _model->diameter();
     _model->setPosition( pos );
     auto vel = _model->velocity();
     vel[2] *= bounce_factor ;

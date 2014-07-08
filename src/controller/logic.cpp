@@ -1,10 +1,32 @@
 # include "controller/logic.hpp"
 
-using namespace ::controller;
+# include <algorithm>
 
-Logic::Logic( const std::shared_ptr< ::model::Game >& g ) : _model( g ) {}
+::controller::Logic::Logic( const std::shared_ptr< ::model::Game >& g ) : _model( g ) {}
 
-bool Logic::advance_model( const ::controller::InputEventHandler::keyboard_event& ev )
+void ::controller::Logic::addGameObject( std::shared_ptr< model::GameObject > const& o )
+{
+  // we do lazy adding in case of inserting an element while iterating on the object vector
+  if( not o ) throw std::logic_error( "model::Game::addObject: Invalid object." );
+  _waitingObjects.push_back( o );
+}
+
+void ::controller::Logic::processAddedGameObjects()
+{
+  game_model()->_objects.insert( game_model()->_objects.end(),_waitingObjects.begin(), _waitingObjects.end() );
+  _waitingObjects.clear();
+}
+
+void ::controller::Logic::removeInvalidGameObjects(  )
+{
+  auto predicate = []( std::shared_ptr< model::GameObject > const& go )->bool { return ! go->is_marked_as_deleted(); }; 
+  game_model()->_objects.erase( std::remove_if( game_model()->_objects.begin(), game_model()->_objects.end(), predicate )
+                              , game_model()->_objects.end()
+                              );
+}
+
+
+bool ::controller::Logic::advance_model( const ::controller::InputEventHandler::keyboard_event& ev )
 {
   game_model()->setTimestamp( std::chrono::steady_clock::now() );
 
@@ -22,9 +44,11 @@ bool Logic::advance_model( const ::controller::InputEventHandler::keyboard_event
         o->registerData( obj_logic );
       }
 
-      if( obj_logic and obj_logic->advance( *this, ev ) ) return true;
+      if( obj_logic ) obj_logic->advance( *this, ev );
     }
   }
+
+  processAddedGameObjects();
 
   return false;
 }

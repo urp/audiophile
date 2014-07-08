@@ -39,7 +39,14 @@ void GlRenderer::visualize_model( GlutWindow& w )
     if( not drawable )
     {
       std::clog << "::view::GlRenderer::visualize_model: Adding new Drawable for \"" << o->name() << "\"." << std::endl;
-      drawable = _drawable_factory.create_for( o );
+      try{
+        drawable = _drawable_factory.create_for( o );
+      }catch( std::out_of_range e )
+      {
+        std::cerr << "::view::GlRenderer::visualize_model: cought exeption: " << e.what() << std::endl;
+        continue;
+      }
+
       o->registerData( drawable );
     }
 

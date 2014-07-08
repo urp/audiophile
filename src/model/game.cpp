@@ -31,7 +31,7 @@ std::chrono::duration< double > const& Game::timestep() const
 void Game::setTimestamp( std::chrono::steady_clock::time_point const& t )
 {
   auto last_timestamp = timestamp();
-  _timestamp = std::chrono::steady_clock::now();
+  _timestamp = t;
   _timestep = t - last_timestamp;
   _runtime += _timestep;
 }

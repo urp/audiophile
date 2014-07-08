@@ -29,7 +29,15 @@ void AlRenderer::auralize_model()
     if( not audible )
     {
       std::clog << "::view::AlRenderer::auralize_model: Adding new Audible for \"" << o->name() << "\"." << std::endl;
-      audible = _audible_factory.create_for( o );
+      try
+      {
+        audible = _audible_factory.create_for( o );
+      }catch( std::out_of_range e )
+      {
+        std::cerr << "::view::GlRenderer::visualize_model: cought exeption: " << e.what() << std::endl;
+        continue;
+      }
+      
       o->registerData( audible );
     }
 

@@ -19,12 +19,8 @@ namespace flappy_box
 
       private:
         std::shared_ptr< model::Box const > _box;
+        ALuint _al_box_source;
 
-        ALuint whiteNoiseBuffer, whiteNoiseSource;
-        ALuint musicBuffers[4];
-        ALuint musicSources[4];
-        ALuint hintBuffers[2];
-        ALuint hintSources[2];
     }; // BoxAlAudible
 
   } // view::

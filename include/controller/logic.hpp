@@ -22,6 +22,8 @@ namespace controller
       Logic() = delete;
       Logic( std::shared_ptr< model::Game > const& );
 
+      void addGameObject( std::shared_ptr< model::GameObject > const& o );
+
       // Advance model.
       virtual bool advance_model( controller::InputEventHandler::keyboard_event const& = controller::InputEventHandler::keyboard_event() );
 
@@ -33,7 +35,12 @@ namespace controller
       delegate_factory_type const& logic_factory() const { return _obj_logic_factory; }
 
     protected:
+      void processAddedGameObjects();
+      void removeInvalidGameObjects();
+
       std::shared_ptr< model::Game > _model;
+      /// List of objects to be added at the end of advance_model function.
+      std::vector< std::shared_ptr< model::GameObject > > _waitingObjects;
       delegate_factory_type _obj_logic_factory;
 
   }; // Logic

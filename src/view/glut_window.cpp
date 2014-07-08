@@ -23,11 +23,12 @@ GlutWindow::GlutWindow( const std::string& name, size_t width, size_t height, co
     throw std::logic_error( "::view::GlutWindow::GlutWindow: Could not create GLUT window." );
 
   GLenum err = glewInit();
-  if (GLEW_OK != err)
-  {
-    /* Problem: glewInit failed, something is seriously wrong. */
-    std::fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-  }
+  if (GLEW_OK != err) throw std::runtime_error("glewInit failed");
+
+  std::cout << "GlutWindow::GlutWindow: OpenGL version: " << glGetString(GL_VERSION)                  << std::endl;
+  std::cout << "GlutWindow::GlutWindow: GLSL version:   " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+  std::cout << "GlutWindow::GlutWindow: Vendor:         " << glGetString(GL_VENDOR)                   << std::endl;
+  std::cout << "GlutWindow::GlutWindow: Renderer:       " << glGetString(GL_RENDERER)                 << std::endl;
 
   glutSetWindowData( this );
 

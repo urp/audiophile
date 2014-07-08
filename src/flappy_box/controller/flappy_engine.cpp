@@ -31,8 +31,11 @@ void FlappyEngine::init( int& argc, char** argv )
   alutInit( &argc, argv );
 
   auto tube = std::make_shared< model::Tube >();
+  auto box = std::make_shared< model::Box  >( tube );
+  tube->setBox( box );
+  
   game_model()->addGameObject( tube );
-  game_model()->addGameObject( std::make_shared< model::Box  >( tube ) );
+  game_model()->addGameObject( box );
   
   game_logic() ->   logic_factory().register_module< model::Box  >( []( std::shared_ptr< model::Box  > const& b ) { return std::make_shared<  BoxObjectLogic >     ( b ); } );
   game_logic() ->   logic_factory().register_module< model::Tube >( []( std::shared_ptr< model::Tube > const& t ) { return std::make_shared< TubeObjectLogic >     ( t ); } );
@@ -59,7 +62,7 @@ void FlappyEngine::run()
 void FlappyEngine::step( ::controller::InputEventHandler::keyboard_event const& ev )
 {
   ::controller::Engine::step( ev );
-  //al_renderer()->auralize_model();
+  al_renderer()->auralize_model();
   _main_window->invalidate();
 }
 

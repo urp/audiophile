@@ -15,7 +15,7 @@ Extra Arguments=
 Install Directory=file:///usr/local
 
 [Launch]
-Launch Configurations=Launch Configuration 0
+Launch Configurations=Launch Configuration 0,Launch Configuration 1
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=execute
@@ -28,12 +28,30 @@ Arguments=
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e)
 Dependency Action=Build
 EnvironmentGroup=default
-Executable=file:///home/urp/Documents/cpp-vorlesung2014/audiophile/
+Executable=optirun
 External Terminal=konsole --noclose --workdir %workdir -e %exe
 Project Target=audiophile,audiophile
 Use External Terminal=false
 Working Directory=
 isExecutable=false
+
+[Launch][Launch Configuration 1]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=audiophle (optirun)
+Type=Native Application
+
+[Launch][Launch Configuration 1][Data]
+Arguments=/home/urp/Documents/cpp-vorlesung2014/audiophile/build/audiophile
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e)
+Dependency Action=Build
+EnvironmentGroup=default
+Executable=optirun
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=audiophile,audiophile
+Use External Terminal=false
+Working Directory=file:///home/urp/Documents/cpp-vorlesung2014/audiophile/build
+isExecutable=true
 
 [Project]
 VersionControlSupport=kdevgit
