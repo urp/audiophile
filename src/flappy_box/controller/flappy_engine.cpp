@@ -37,13 +37,13 @@ void FlappyEngine::init( int& argc, char** argv )
   game_model()->addGameObject( tube );
   game_model()->addGameObject( box );
   
-  game_logic() ->   logic_factory().register_module< model::Box  >( []( std::shared_ptr< model::Box  > const& b ) { return std::make_shared<  BoxObjectLogic >     ( b ); } );
-  game_logic() ->   logic_factory().register_module< model::Tube >( []( std::shared_ptr< model::Tube > const& t ) { return std::make_shared< TubeObjectLogic >     ( t ); } );
+  game_logic() ->   logic_factory().register_derived_key< model::Box  >( []( std::shared_ptr< model::Box  > const& b ) { return std::make_shared<  BoxObjectLogic >     ( b ); } );
+  game_logic() ->   logic_factory().register_derived_key< model::Tube >( []( std::shared_ptr< model::Tube > const& t ) { return std::make_shared< TubeObjectLogic >     ( t ); } );
 
-  gl_renderer()->drawable_factory().register_module< model::Box  >( []( std::shared_ptr< model::Box  > const& b ) { return std::make_shared< view:: BoxGlDrawable >( b ); } );
-  gl_renderer()->drawable_factory().register_module< model::Tube >( []( std::shared_ptr< model::Tube > const& t ) { return std::make_shared< view::TubeGlDrawable >( t ); } );
+  gl_renderer()->drawable_factory().register_derived_key< model::Box  >( []( std::shared_ptr< model::Box  > const& b ) { return std::make_shared< view:: BoxGlDrawable >( b ); } );
+  gl_renderer()->drawable_factory().register_derived_key< model::Tube >( []( std::shared_ptr< model::Tube > const& t ) { return std::make_shared< view::TubeGlDrawable >( t ); } );
 
-  al_renderer()-> audible_factory().register_module< model::Box >( []( std::shared_ptr< model::Box > const& b ) { return std::make_shared< view::BoxAlAudible > ( b ); } );
+  al_renderer()-> audible_factory().register_derived_key< model::Box >( []( std::shared_ptr< model::Box > const& b ) { return std::make_shared< view::BoxAlAudible > ( b ); } );
 
 }
 

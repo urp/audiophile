@@ -27,7 +27,7 @@ namespace controller
       // Implements abstract class InputEventHandler. Simply calls function step providing the keyboard_event ev as an argument.
       // Input events should be provided by some input-event-provider (e.g. GlutWindow).
       // Override this function to change event distribution and processing.
-      virtual bool handle( ::controller::InputEventHandler::keyboard_event const& ev );
+      virtual bool handle( ::controller::InputEventHandler::keyboard_event const& ev ) override;
 
     private:
       std::shared_ptr< model::Game > _model;

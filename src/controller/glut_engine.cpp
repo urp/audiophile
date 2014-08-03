@@ -24,13 +24,14 @@ void GlutEngine::init( int& argc, char** argv )
 {
   glutInit( &argc, argv );
   glutSetOption( GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION );
+
   // Set global function which will be invoked by glutStepTimer.
   __controller__glut_engine__step_func = [this](){ this->step(); };
-  // Register glutStepTimer for the first time.  re-registers itself until the glutMainLoop finishes.
 }
 
 void GlutEngine::run()
 {
+  // Register glutStepTimer for the first time. It re-registers itself until glutMainLoop finishes.
   glutTimerFunc( _prefered_timestep_millisec, glutStepTimer, _prefered_timestep_millisec );
 
   // Run game.
