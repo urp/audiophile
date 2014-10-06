@@ -2,6 +2,9 @@
 
 # include "flappy_box/model/box.hpp"
 
+# include "view/gl_shader.hpp"
+# include "view/gl_shader_program.hpp"
+
 # include <random>
 
 using namespace ::flappy_box::view;
@@ -13,7 +16,6 @@ TubeGlDrawable::TubeGlDrawable( shared_ptr< model::Tube > const& t )
 , _first_timestamp( steady_clock::time_point::min() )
 , _cp_bounds( steady_clock::time_point::min(), steady_clock::time_point::min() )
 {
-  //Create a new VBO and use the variable id to store the VBO id
   glGenBuffers( 2, lineVBOs );
 }
 
@@ -111,71 +113,6 @@ void TubeGlDrawable::drawLines()
   glDrawArrays( GL_LINE_STRIP, 0, upper_vertices.size() );
 }
 
-
-void TubeGlDrawable::updateWallPoints( size_t reused_cps, flappy_box::model::Tube::control_point_map_type::const_iterator const& it_old_end )
-{
-  static default_random_engine generator;
-  static uniform_real_distribution< double > distribution( 0., 1. );
-
-  auto const& cps = _model->getControlPoints();
-  
-  glDeleteBuffers( p_segment_vbos.size() - reused_cps, p_segment_vbos.data() );
-  copy( p_segment_vbos.end() - reused_cps, p_segment_vbos.end(), p_segment_vbos.begin() );
-  p_segment_vbos.resize( _model->getControlPoints().size() - 1 );
-  glGenBuffers( p_segment_vbos.size() - reused_cps, &p_segment_vbos[ reused_cps ] );
-
-  copy( p_segment_samples.end() - reused_cps, p_segment_samples.end(), p_segment_samples.begin() );
-  p_segment_samples.resize( p_segment_vbos.size() );
-
-  size_t seg_idx = reused_cps;
-  for( auto cp_it = it_old_end; cp_it != prev( cps.end() ) ; ++cp_it )
-  {
-    auto const& tcp1 = *cp_it;
-    auto const& tcp2 = *next( cp_it );
-    constexpr size_t num_p_segment_samples = 200;
-    p_segment_samples[ seg_idx ].resize( num_p_segment_samples );
-
-    double const t1 = duration_cast< duration<double> >( tcp1.first - _first_timestamp ).count();
-    double const t2 = duration_cast< duration<double> >( tcp2.first - _first_timestamp ).count();
-    double const center1 = ( tcp1.second.second + tcp1.second.first ) * .5;
-    double const center2 = ( tcp2.second.second + tcp2.second.first ) * .5;
-    double const radius1 = ( tcp1.second.second - tcp1.second.first ) * .5;
-    double const radius2 = ( tcp2.second.second - tcp2.second.first ) * .5;
-
-    for( size_t s_idx = 0; s_idx < num_p_segment_samples; ++s_idx )
-    {
-      double const angle = M_PI * distribution( generator );
-      double const ipol_factor = distribution( generator );
-
-      double const x_coord =     t1 * ( 1. - ipol_factor ) +      t2 * ipol_factor;
-      double const radius = radius1 * ( 1. - ipol_factor ) + radius2 * ipol_factor;
-      double const center = center1 * ( 1. - ipol_factor ) + center2 * ipol_factor;
-      p_segment_samples[ seg_idx ][ s_idx ] = { x_coord
-                                              , radius * sin( angle )
-                                              , radius * cos( angle ) + center
-                                              };
-    }
-
-    glBindBuffer( GL_ARRAY_BUFFER, p_segment_vbos[seg_idx] );
-    glBufferData( GL_ARRAY_BUFFER, p_segment_samples[seg_idx].size() * 3 * sizeof(double), p_segment_samples[seg_idx].data(), GL_STATIC_DRAW);
-
-    seg_idx++;
-  }
-}
-
-void TubeGlDrawable::drawWallPoints()
-{
-  glPointSize( 2. );
-  glColor3f( .7,.7,.7 );
-  for( size_t seg_idx = 0; seg_idx < p_segment_vbos.size(); seg_idx++ )
-  {
-    glBindBuffer( GL_ARRAY_BUFFER, p_segment_vbos[seg_idx] );
-    glVertexPointer( 3, GL_DOUBLE, 0, nullptr );
-    glDrawArrays( GL_POINTS, 0, p_segment_samples[seg_idx].size() );
-  }
-}
-
-
 void TubeGlDrawable::updateWallSurface( size_t reused_cps, flappy_box::model::Tube::control_point_map_type::const_iterator const& it_old_end )
 {
   auto const& cps = _model->getControlPoints();
@@ -239,7 +176,7 @@ void TubeGlDrawable::updateWallSurface( size_t reused_cps, flappy_box::model::Tu
       double n_y = -sin_a * (1-n_x*n_x);
       double n_z = -cos_a * (1-n_x*n_x);
       
-      clog << "normal seg " << seg_idx << " norm " << s_idx << " x " << n_x << " y " << n_y << " z " << n_z << endl;
+      //clog << "normal seg " << seg_idx << " norm " << s_idx << " x " << n_x << " y " << n_y << " z " << n_z << endl;
       
       s_normal_samples[ seg_idx ][ s_idx   ] = { n_x, n_y, n_z };
       s_normal_samples[ seg_idx ][ s_idx+1 ] = { n_x, n_y, n_z };
@@ -308,236 +245,153 @@ void exitOnGLError(const char* error_message)
   if( error_value != GL_NO_ERROR)
   {
     cerr << error_message << ": errno " << error_value << " " << string( reinterpret_cast< const char*>( gluErrorString( error_value) ) ) << endl;
-    exit(EXIT_FAILURE);
+    std::abort();
   }
 }
 
-void printShaderInfoLog(GLuint obj)
+ShaderProgram setupWallSurfaceShaderProgram()
 {
-  int infologLength = 0;
-  int charsWritten  = 0;
-  char *infoLog;
-  
-  glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
-  
-  if (infologLength > 0)
-  {
-    char* infoLog = new char[infologLength];
-    glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
-    cerr << __func__ << ": Error compiling glsl shader:" << endl << infoLog << endl;
-    delete infoLog;
-  }
+  Shader vertex_shader( GL_VERTEX_SHADER );
+  vertex_shader.loadFromFile( "../res/shaders/blinn_phong.vert" );
+  vertex_shader.compile();
+
+  Shader fragment_shader( GL_FRAGMENT_SHADER );
+  fragment_shader.loadFromFile( "../res/shaders/blinn_phong.frag" );
+  fragment_shader.compile();
+
+  ShaderProgram prog;
+  prog.attachShader( vertex_shader );
+  prog.attachShader( fragment_shader );
+  prog.link();
+
+  return prog;
 }
 
-void printProgramInfoLog(GLuint obj)
+
+struct MatrixBlock
 {
-  int infologLength = 0;
-  int charsWritten  = 0;
-  char *infoLog;
-  
-  glGetProgramiv( obj, GL_INFO_LOG_LENGTH, &infologLength );
-  if( infologLength > 0 )
-  {
-    char* infoLog = new char[ infologLength ];
-    glGetProgramInfoLog( obj, infologLength, &charsWritten, infoLog );
-    clog << __func__ << ": Error linking glsl program:" << endl << infoLog << endl;
-    delete infoLog;
-  }
-}
+  Eigen::Matrix< GLfloat, 4, 4 > pvm_matrix;
+  Eigen::Matrix< GLfloat, 4, 4 >  vm_matrix;
+  Eigen::Matrix< GLfloat, 4, 4 >   n_matrix;
+};
 
-GLuint setupWallSurfaceShaderProgram()
+struct LightBlock
 {
-  const char* vs_src =
-//                         { "#version 130\n"
-//                           "\n"
-//                           "uniform mat4 projection_matrix;\n"
-//                           "uniform mat4 modelview_matrix;\n"
-//                           "\n"
-//                           "in vec3 position;\n"
-//                           "\n"
-//                           "void main()\n"
-//                           "{\n"
-//                           "  gl_Position = projection_matrix * modelview_matrix * vec4( position, 1. );\n" 
-//                           "}\n"
-//                         };
-                        { "#version 130\n"
-                          "\n"
-                          "in vec3 position;\n"
-                          "in vec3 normal;\n"
-                          "uniform mat4 projection_matrix;\n"
-                          "uniform mat4 modelview_matrix;\n"
-                          "\n"
-                          "varying vec4 diffuse,ambient,ambientGlobal;\n"
-                          "varying vec3 normal_fs,lightDir,ecPos;\n"
-                          "\n"
-                          "void main()\n"
-                          "{ \n"
-                          "  mat3 normal_matrix = transpose( inverse( mat3( modelview_matrix ) ) );\n"
-                          "  vec4 pos = modelview_matrix * vec4( position, 1.);\n"
-                          "  \n"
-                          "  normal_fs = normalize( normal_matrix * normal );\n" // TODO: replace gl_NormalMatrix
-                          "  lightDir = vec3( gl_LightSource[0].position - pos );\n"
-                          "  ecPos = vec3( -pos );\n"
-                          "  \n"
-                          "  diffuse = gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse;\n"
-                          "  ambient = gl_FrontMaterial.ambient * gl_LightSource[0].ambient;\n"
-                          "  ambientGlobal = gl_LightModel.ambient * gl_FrontMaterial.ambient;\n"
-                          "  gl_Position = projection_matrix * modelview_matrix * vec4( position, 1. );\n"
-                          "}\n"
-                        };
-  const char* fs_src =
-//                         { "#version 130\n"
-//                           "\n"
-//                           "out vec4 output_frag_color;\n"
-//                           "\n"
-//                           "void main()\n"
-//                           "{\n"
-//                           "  output_frag_color = vec4( 1.,1.,1., 1. );\n"
-//                           "}\n"
-//                         };
-                          { 
-                            "#version 130\n"
-                            "\n"
-                            "out vec4 output_frag_color;\n"
-                            "\n"
-                            "varying vec4 diffuse,ambient,ambientGlobal;\n"
-                            "varying vec3 normal_fs,lightDir,ecPos;\n"
-                            "\n"
-                            "void main()\n"
-                            "{ \n"
+  GLfloat l_pos[4];
+  GLfloat constant_attentuation;
+  GLfloat linear_attentuation;
+  GLfloat quadratic_attentuation;
+};
 
-                            "  float att;\n"
-                            "  \n"
-                            "  vec3 normal = normalize(normal_fs);\n"
-                            "  vec3 lightdir = normalize( lightDir );\n"
-                            "  vec3 ecpos    = normalize( ecPos );\n"
-                            "  \n"
-                            "  // The ambient term will always be present\n"
-                            "  vec4 color = ambientGlobal;\n"
-                            "  \n"
-                              "float intensity = max(dot(normal,lightdir),0.0);\n"
-                            "  \n"
-                            "  if( intensity > 0. ) \n"
-                            "  { \n"
-                            "    att = 1.0 / ( gl_LightSource[0].constantAttenuation\n"
-                            "                + gl_LightSource[0].linearAttenuation * length(lightDir)\n"
-                            "                + gl_LightSource[0].quadraticAttenuation * length(lightDir) * length(lightDir) );\n"
-                            "    color += att * (diffuse * intensity + ambient);\n"
-                            "    \n"
-                            "    vec3 halfvec = normalize(lightdir + ecpos);\n"
-                            "    float intspec = max(dot(normal,halfvec),0.0);\n"
-                            "    color += att * gl_FrontMaterial.specular * gl_LightSource[0].specular * pow( intspec,gl_FrontMaterial.shininess);\n"
-                            "  }\n"
-                            "  output_frag_color = color;\n"
-                            "}\n"
-                          };
+struct MaterialBlock
+{
+  GLfloat diffuse[4];
+  GLfloat ambient[4];
+  GLfloat specular[4];
+  GLfloat shininess;
+};
 
-  GLuint vs_handle = glCreateShader( GL_VERTEX_SHADER );
-  glShaderSource( vs_handle, 1, &vs_src, nullptr );
-  glCompileShader( vs_handle );
-  printShaderInfoLog( vs_handle );
-  exitOnGLError( "Create vertex shader" );
-
-  GLuint fs_handle = glCreateShader( GL_FRAGMENT_SHADER );
-  glShaderSource( fs_handle, 1, &fs_src, nullptr );
-  glCompileShader( fs_handle );
-  printShaderInfoLog( fs_handle );
-  exitOnGLError( "Create fragment shader" );
-
-  GLuint sp_handle = glCreateProgram();
-  glAttachShader( sp_handle, vs_handle );
-  glAttachShader( sp_handle, fs_handle );
-  exitOnGLError( "Attach shaders" );
-
-  glLinkProgram( sp_handle );
-  printProgramInfoLog( sp_handle );
-  exitOnGLError( "Create program" );
-
-  return sp_handle;
-}
 
 void TubeGlDrawable::drawWallSurfaceWithShaders( chrono::duration< double > const& t )
 {
-  {
-    glPolygonMode( GL_FRONT, GL_FILL );
-    glCullFace( GL_FRONT );
-    glFrontFace( GL_CCW );
-    glShadeModel( GL_SMOOTH );
-    glColor3f( .6,.6,.6 );
-  }
-  {
-    glEnable( GL_LIGHTING );
-    glEnable( GL_LIGHT0 );
 
-    float l0_pos[4] = { t.count(), 0.1, _model->getBox()->position().z(), 1. };
-    glLightfv( GL_LIGHT0, GL_POSITION             , l0_pos );
-    glLightf ( GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 1. );
-    glLightf ( GL_LIGHT0, GL_QUADRATIC_ATTENUATION, .5 );
-  }
+  static ShaderProgram prog = setupWallSurfaceShaderProgram();
+  prog.use();
   {
-    glEnable( GL_COLOR_MATERIAL );
-    float mat_ambient[4] = { 0.1, 0.2, 0.2, 1. };
-    glMaterialfv( GL_FRONT, GL_AMBIENT, mat_ambient );
-    float mat_diffuse[4] = { 0.7, 0.9, 0.9, 1. };
-    glMaterialfv( GL_FRONT, GL_DIFFUSE, mat_diffuse );
-    float mat_specular[4] = { 0.9, 0.1, 0.1, 1. };
-    glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular );
-    float mat_shininess[] = { 10. };
-    glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess );
-  }
+    { 
+      MatrixBlock mat_block;
+      glGetFloatv( GL_MODELVIEW_MATRIX, mat_block.vm_matrix.data() );
 
-  static GLuint sp_handle = setupWallSurfaceShaderProgram();
-  glUseProgram( sp_handle );
-  {
-    //glEnableClientState( GL_NORMAL_ARRAY );
+      Eigen::Matrix< GLfloat, 4, 4 > p_matrix;
+      glGetFloatv( GL_PROJECTION_MATRIX, p_matrix.data() );
 
-    GLint modelview_loc = glGetUniformLocation( sp_handle, "modelview_matrix" );
-    GLfloat modelview_matrix[16]; 
-    glGetFloatv( GL_MODELVIEW_MATRIX, modelview_matrix );
-    glUniformMatrix4fv( modelview_loc, 1, false, modelview_matrix );
-    exitOnGLError( "Setting uniform modelview_matrix");
+      mat_block.pvm_matrix = p_matrix * mat_block.vm_matrix;
+      mat_block.n_matrix = mat_block.vm_matrix/*.block(0,0,3,3)*/.inverse().transpose();
 
-    GLint projection_loc = glGetUniformLocation( sp_handle, "projection_matrix" );
-    GLfloat projection_matrix[16];
-    glGetFloatv( GL_PROJECTION_MATRIX, projection_matrix );
-    glUniformMatrix4fv( projection_loc, 1, false, projection_matrix );
-    exitOnGLError( "Setting uniform projection_matrix");
+      const GLuint binding_point = 0;
+      prog.bindUniformBlock( "Matrices", binding_point );
+
+      GLuint mat_block_ubo;
+      glGenBuffers( 1, &mat_block_ubo );
+      glBindBuffer( GL_UNIFORM_BUFFER, mat_block_ubo );
+      glBufferData( GL_UNIFORM_BUFFER, sizeof(MatrixBlock), &mat_block, GL_DYNAMIC_DRAW );
+      glBindBufferBase( GL_UNIFORM_BUFFER, binding_point, mat_block_ubo );
+
+      exitOnGLError( "Binding Matrices uniform block");
+    }
+
+    {
+      LightBlock light_block = { { t.count(), 0.1, _model->getBox()->position().z(), 1. }
+                               , 1., .0 , .1 
+                               };
+
+      GLuint binding_point = 1;
+      prog.bindUniformBlock( "Light", binding_point );
+
+      GLuint light_block_ubo;
+      glGenBuffers( 1, &light_block_ubo );
+      glBindBuffer( GL_UNIFORM_BUFFER, light_block_ubo );
+      glBufferData( GL_UNIFORM_BUFFER, sizeof( LightBlock ), &light_block, GL_DYNAMIC_DRAW );
+      glBindBufferBase( GL_UNIFORM_BUFFER, binding_point, light_block_ubo );
+
+      exitOnGLError( "Binding Lights uniform block");
+    }
+
+    {
+      MaterialBlock material_block ={ { 0.7, 0.9, 0.9, 1. }, { 0., 0., 0., 1. }, { 0.4, 0.1, 0.1, 1. }, 10. };
+
+      GLuint binding_point = 2;
+      prog.bindUniformBlock( "Materials", binding_point );
+
+      GLuint material_block_ubo;
+      glGenBuffers( 1, &material_block_ubo );
+      glBindBuffer( GL_UNIFORM_BUFFER, material_block_ubo );
+      glBufferData( GL_UNIFORM_BUFFER, sizeof(MaterialBlock), &material_block, GL_DYNAMIC_DRAW );
+      glBindBufferBase( GL_UNIFORM_BUFFER, binding_point, material_block_ubo );
+
+      exitOnGLError( "Binding Material uniform block");
+    }
+
+    {
+      glPolygonMode( GL_FRONT, GL_FILL );
+      glCullFace( GL_FRONT );
+      glFrontFace( GL_CCW );
+      glShadeModel( GL_SMOOTH );
+    }
 
     for( size_t seg_idx = 0; seg_idx < s_segment_vbos.size(); seg_idx++ )
     {
       glBindBuffer( GL_ARRAY_BUFFER, s_segment_vbos[seg_idx] );
-      GLint position_loc = glGetAttribLocation( sp_handle, "position" );
+      GLint position_loc = glGetAttribLocation( prog.id(), "position" );
       glEnableVertexAttribArray( position_loc );// 1rst attribute buffer : vertices
-      glVertexAttribPointer(  position_loc,
-                              3,         // size
-                              GL_DOUBLE, // type
-                              GL_FALSE,  // normalized?
-                              0,         // stride
-                              nullptr    // array buffer offset
-                            );
-      exitOnGLError( "Setting glEnableVertexAttribPointer(vertices)");
+      glVertexAttribPointer( position_loc
+                           , 3         // size
+                           , GL_DOUBLE // type
+                           , GL_FALSE  // normalized?
+                           , 0         // stride
+                           , nullptr    // array buffer offset
+                           );
+      exitOnGLError( "Setting glEnableVertexAttribPointer(vertices)" );
 
       glBindBuffer( GL_ARRAY_BUFFER, s_normal_vbos[seg_idx] );
-      GLint normal_loc = glGetAttribLocation( sp_handle, "normal" );
+      GLint normal_loc = glGetAttribLocation( prog.id(), "normal" );
       glEnableVertexAttribArray( normal_loc );// 2nd attribute buffer : normals
-      glVertexAttribPointer(  normal_loc,
-                              3,         // size
-                              GL_DOUBLE, // type
-                              GL_FALSE,  // normalized?
-                              0,         // stride
-                              nullptr    // array buffer offset
-      );
-      exitOnGLError( "Setting glEnableVertexAttribPointer(normals)");
+      glVertexAttribPointer( normal_loc
+                           , 3         // size
+                           , GL_DOUBLE // type
+                           , GL_FALSE  // normalized?
+                           , 0         // stride
+                           , nullptr   // array buffer offset
+                           );
+      exitOnGLError( "Setting glEnableVertexAttribPointer(normals)" );
 
       glDrawArrays( GL_TRIANGLE_STRIP, 0, s_segment_samples[seg_idx].size() );
       glDisableVertexAttribArray( position_loc );
+      glDisableVertexAttribArray( normal_loc );
     }
 
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    //glDisableClientState( GL_NORMAL_ARRAY );
   }
-  glUseProgram( 0 );
+  prog.disable();
 
-  glDisable( GL_LIGHT0 );
-  glDisable( GL_LIGHTING );
 }

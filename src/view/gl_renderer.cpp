@@ -27,7 +27,7 @@ GlRenderer::delegate_factory_type const& GlRenderer::drawable_factory() const
 
 void GlRenderer::visualize_model( GlutWindow& w )
 {
-  glClearColor( .1,.2,.3, 1. );
+  glClearColor( .0,.0,.0, 1. );
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();

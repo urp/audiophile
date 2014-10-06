@@ -13,7 +13,7 @@ namespace controller
     public:
       struct ObjectLogic : public model::GameObject::Data
       {
-        // Advance Game and handle keyboard_event. Returns true if event has been handled.
+        /// Advance Game and handle keyboard_event. Returns true if event has been handled.
         virtual bool advance( Logic&, InputEventHandler::keyboard_event const& ) = 0;
       };
 
@@ -24,7 +24,7 @@ namespace controller
 
       void addGameObject( std::shared_ptr< model::GameObject > const& o );
 
-      // Advance model.
+      /// Advance model.
       virtual bool advance_model( controller::InputEventHandler::keyboard_event const& = controller::InputEventHandler::keyboard_event() );
 
       std::shared_ptr< model::Game >       game_model()       { return _model; }
@@ -32,11 +32,17 @@ namespace controller
 
       /// Return factory creating ObjectLogic delegates.
       delegate_factory_type&       logic_factory()       { return _obj_logic_factory; }
+      /// Return factory creating ObjectLogic delegates.
       delegate_factory_type const& logic_factory() const { return _obj_logic_factory; }
 
     protected:
+      /// Overwrite to do custom processing before any object logic is executed (called in advance_model).
+      virtual void preprocess( controller::InputEventHandler::keyboard_event const& );
+      /// Overwrite to do custom postprocessing after all object logic was executed (called in advance_model).
+      virtual void postprocess( controller::InputEventHandler::keyboard_event const& );
+
       void processAddedGameObjects();
-      void removeInvalidGameObjects();
+      void removeDeletedGameObjects();
 
       std::shared_ptr< model::Game > _model;
       /// List of objects to be added at the end of advance_model function.

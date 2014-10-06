@@ -11,26 +11,13 @@ void ::controller::Logic::addGameObject( std::shared_ptr< model::GameObject > co
   _waitingObjects.push_back( o );
 }
 
-void ::controller::Logic::processAddedGameObjects()
-{
-  game_model()->_objects.insert( game_model()->_objects.end(),_waitingObjects.begin(), _waitingObjects.end() );
-  _waitingObjects.clear();
-}
-
-void ::controller::Logic::removeInvalidGameObjects(  )
-{
-  auto predicate = []( std::shared_ptr< model::GameObject > const& go )->bool { return ! go->is_marked_as_deleted(); }; 
-  game_model()->_objects.erase( std::remove_if( game_model()->_objects.begin(), game_model()->_objects.end(), predicate )
-                              , game_model()->_objects.end()
-                              );
-}
-
-
 bool ::controller::Logic::advance_model( const ::controller::InputEventHandler::keyboard_event& ev )
 {
   game_model()->setTimestamp( std::chrono::steady_clock::now() );
 
   std::clog << "::controller::Logic::advance: timestep " << std::chrono::duration_cast< std::chrono::milliseconds >( game_model()->timestep() ).count() << '.' << std::endl;
+
+  preprocess( ev );
 
   for( auto o : game_model()->objects() )
   {
@@ -48,7 +35,31 @@ bool ::controller::Logic::advance_model( const ::controller::InputEventHandler::
     }
   }
 
-  processAddedGameObjects();
+  postprocess( ev );
 
   return false;
+}
+
+void controller::Logic::preprocess( controller::InputEventHandler::keyboard_event const& )
+{
+  removeDeletedGameObjects();
+}
+
+void controller::Logic::postprocess( controller::InputEventHandler::keyboard_event const& )
+{
+  processAddedGameObjects();
+}
+
+void ::controller::Logic::processAddedGameObjects()
+{
+  game_model()->_objects.insert( game_model()->_objects.end(),_waitingObjects.begin(), _waitingObjects.end() );
+  _waitingObjects.clear();
+}
+
+void ::controller::Logic::removeDeletedGameObjects(  )
+{
+  auto predicate = []( std::shared_ptr< model::GameObject > const& go )->bool { return go->is_marked_as_deleted(); }; 
+  game_model()->_objects.erase( std::remove_if( game_model()->_objects.begin(), game_model()->_objects.end(), predicate )
+  , game_model()->_objects.end()
+  );
 }
