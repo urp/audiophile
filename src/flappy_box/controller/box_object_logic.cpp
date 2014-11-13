@@ -1,6 +1,4 @@
 # include "flappy_box/controller/box_object_logic.hpp"
-# include <AL/alut.h>
-# include <thread>
 
 using namespace ::flappy_box::controller;
 

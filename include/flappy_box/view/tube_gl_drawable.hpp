@@ -27,7 +27,7 @@ namespace flappy_box
         void drawWallPoints();
         void updateWallSurface( std::size_t, flappy_box::model::Tube::control_point_map_type::const_iterator const& );
         void drawWallSurface( std::chrono::duration< double > const& );
-        void drawWallSurfaceWithShaders( std::chrono::duration< double > const& t );
+        void drawWallSurfaceWithShaders( std::chrono::duration< double > const& , ::view::GlRenderer const& );
 
         std::shared_ptr< model::Tube const > _model;
 

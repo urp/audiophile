@@ -28,13 +28,13 @@ void AlRenderer::auralize_model()
     std::shared_ptr< Audible > audible = o->getData< Audible >();
     if( not audible )
     {
-      //std::clog << "::view::AlRenderer::auralize_model: Adding new Audible for \"" << o->name() << "\"." << std::endl;
+      std::clog << "::view::AlRenderer::auralize_model: Adding new Audible for \"" << o->name() << "\"." << std::endl;
       try
       {
         audible = _audible_factory.create_for( o );
       }catch( std::out_of_range e )
       {
-        std::cerr << "::view::GlRenderer::auralize_model: cought exeption: " << e.what() << std::endl;
+        //std::cerr << "::view::GlRenderer::auralize_model: cought exeption: " << e.what() << std::endl;
         continue;
       }
 

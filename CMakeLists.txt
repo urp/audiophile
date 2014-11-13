@@ -2,6 +2,8 @@ cmake_minimum_required( VERSION 2.8 )
 
 project(audiophile)
 
+set( CMAKE_BUILD_TYPE "DEBUG" )
+
 include_directories( include )
 
 add_definitions( "--std=c++11" )
@@ -50,11 +52,10 @@ add_definitions(${OPENAL_DEFINITIONS})
  add_definitions(${ALUT_DEFINITIONS})
 
 #########################################################
-# EXECUTABLE AUDIOphile
+# LIBRARY audiophile
 #########################################################
 
-add_executable( audiophile src/main.cpp
-                           # model
+add_library( audiophile    # model
                            src/model/game.cpp
                            src/model/game_object.cpp
                            # controller
@@ -62,10 +63,20 @@ add_executable( audiophile src/main.cpp
                            src/controller/glut_engine.cpp
                            src/controller/logic.cpp
                            # view
-                           src/view/glut_window.cpp
                            src/view/gl_renderer.cpp
                            src/view/al_renderer.cpp
-                           # flappy_box
+                           src/view/projection.cpp
+                           src/view/camera.cpp
+                           src/view/glut_window.cpp
+
+           )
+set( AUDIOPHILE_DEP_LIBRARIES ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARY} ${OPENAL_LIBRARY} ${ALUT_LIBRARY} )
+
+#########################################################
+# EXECUTABLE flappy_box
+#########################################################
+
+add_executable( flappy_box apps/flappy_box.cpp
                            src/flappy_box/model/box.cpp
                            src/flappy_box/model/tube.cpp
                            src/flappy_box/controller/flappy_engine.cpp 
@@ -76,6 +87,31 @@ add_executable( audiophile src/main.cpp
                            src/flappy_box/view/tube_gl_drawable.cpp
               )
 
-target_link_libraries( audiophile ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARY} ${OPENAL_LIBRARY} ${ALUT_LIBRARY} )
+target_link_libraries( flappy_box audiophile ${AUDIOPHILE_DEP_LIBRARIES} )
 
-install(TARGETS audiophile RUNTIME DESTINATION bin)
+#########################################################
+# EXECUTABLE cg3preview
+#########################################################
+
+# find_library( cg3common_LIBS  NAMES cg3common libcg3common )
+# find_library( cg3manager_LIBS NAMES cg3manager libcg3manager )
+# find_library( cg3pt_LIBS      NAMES cg3pt libcg3pt )
+
+add_definitions( -DUSE_RENDERMANAGER_SIGNALS )
+
+add_executable( cg3preview apps/cg3preview.cpp
+                           src/cg3preview/model/renderbuffer.cpp
+                           src/cg3preview/controller/engine.cpp 
+                           src/cg3preview/controller/renderbuffer_object_logic.cpp 
+                           src/cg3preview/view/renderbuffer_gl_drawable.cpp
+                           src/cg3preview/view/renderbuffer_al_audible.cpp
+              )
+
+target_link_libraries( cg3preview audiophile ${AUDIOPHILE_DEP_LIBRARIES} libcg3common libcg3manager libcg3pt )
+
+
+install( DIRECTORY include/ DESTINATION include )
+
+install( TARGETS audiophile flappy_box RUNTIME DESTINATION bin 
+                                       ARCHIVE DESTINATION lib
+       )

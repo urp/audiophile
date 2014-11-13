@@ -2,20 +2,22 @@
 
 # include <algorithm>
 
-::controller::Logic::Logic( const std::shared_ptr< ::model::Game >& g ) : _model( g ) {}
+using namespace std;
 
-void ::controller::Logic::addGameObject( std::shared_ptr< model::GameObject > const& o )
+::controller::Logic::Logic( const shared_ptr< ::model::Game >& g ) : _model( g ) {}
+
+void ::controller::Logic::addGameObject( shared_ptr< model::GameObject > const& o )
 {
   // we do lazy adding in case of inserting an element while iterating on the object vector
-  if( not o ) throw std::logic_error( "model::Game::addObject: Invalid object." );
+  if( not o ) throw logic_error( "model::Game::addObject: Invalid object." );
   _waitingObjects.push_back( o );
 }
 
 bool ::controller::Logic::advance_model( const ::controller::InputEventHandler::keyboard_event& ev )
 {
-  game_model()->setTimestamp( std::chrono::steady_clock::now() );
+  game_model()->setTimestamp( chrono::steady_clock::now() );
 
-  std::clog << "::controller::Logic::advance: timestep " << std::chrono::duration_cast< std::chrono::milliseconds >( game_model()->timestep() ).count() << '.' << std::endl;
+  //clog << "::controller::Logic::advance: timestep " << chrono::duration_cast< chrono::milliseconds >( game_model()->timestep() ).count() << '.' << endl;
 
   preprocess( ev );
 
@@ -26,9 +28,17 @@ bool ::controller::Logic::advance_model( const ::controller::InputEventHandler::
       auto obj_logic = o->getData< ObjectLogic >();
       if( not obj_logic )
       {
-        std::clog << "::controller::Logic::advance: Adding new ObjectLogic for \"" << o->name() << "\"." << std::endl;
-        obj_logic = _obj_logic_factory.create_for( o );
+        clog << "::controller::Logic::advance_model: Adding new ObjectLogic for \"" << o->name() << "\"." << endl;
+        try{
+          obj_logic = _obj_logic_factory.create_for( o );
+        }catch( out_of_range e )
+        {
+          //cerr << "::controller::Logic::advance_model: cought exeption: " << e.what() << endl;
+          continue;
+        }
+
         o->registerData( obj_logic );
+
       }
 
       if( obj_logic ) obj_logic->advance( *this, ev );
@@ -58,8 +68,8 @@ void ::controller::Logic::processAddedGameObjects()
 
 void ::controller::Logic::removeDeletedGameObjects(  )
 {
-  auto predicate = []( std::shared_ptr< model::GameObject > const& go )->bool { return go->is_marked_as_deleted(); }; 
-  game_model()->_objects.erase( std::remove_if( game_model()->_objects.begin(), game_model()->_objects.end(), predicate )
+  auto predicate = []( shared_ptr< model::GameObject > const& go )->bool { return go->is_marked_as_deleted(); }; 
+  game_model()->_objects.erase( remove_if( game_model()->_objects.begin(), game_model()->_objects.end(), predicate )
   , game_model()->_objects.end()
   );
 }

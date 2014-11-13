@@ -1,16 +1,18 @@
 # include "view/gl_renderer.hpp"
 
+# include "view/camera.hpp"
 # include "view/glut_window.hpp"
 
 # include "GL/freeglut.h"
 
+using namespace std;
 using namespace ::view;
 
-GlRenderer::GlRenderer( std::shared_ptr< model::Game const > const& g )
-: _game_model( g )
+GlRenderer::GlRenderer( shared_ptr< model::Game const > const& g )
+: _game_model( g ), _camera( new Camera( make_shared< PerspectiveProjection >( .25*M_PI, 0.,100. ) ) )
 {}
 
-std::shared_ptr< ::model::Game const > const& GlRenderer::game_model() const
+shared_ptr< ::model::Game const > const& GlRenderer::game_model() const
 {
   return _game_model;
 }
@@ -29,21 +31,23 @@ void GlRenderer::visualize_model( GlutWindow& w )
 {
   glClearColor( .0,.0,.0, 1. );
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-  glMatrixMode( GL_MODELVIEW );
-  glLoadIdentity();
-  gluLookAt( 0,-20,0, 0,0,0, 0,0,1 );
+  {
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
+    gluLookAt( 0,-20,0, 0,0,0, 0,0,1 );
+  }
 
   for( auto o : game_model()->objects() )
   {
     auto drawable = o->getData< Drawable >();
     if( not drawable )
     {
-      std::clog << "::view::GlRenderer::visualize_model: Adding new Drawable for \"" << o->name() << "\"." << std::endl;
+      clog << "::view::GlRenderer::visualize_model: Adding new Drawable for \"" << o->name() << "\"." << endl;
       try{
         drawable = _drawable_factory.create_for( o );
-      }catch( std::out_of_range e )
+      }catch( out_of_range e )
       {
-        std::cerr << "::view::GlRenderer::visualize_model: cought exeption: " << e.what() << std::endl;
+        //cerr << "::view::GlRenderer::visualize_model: cought exeption: " << e.what() << endl;
         continue;
       }
 
@@ -59,7 +63,22 @@ void GlRenderer::visualize_model( GlutWindow& w )
 void GlRenderer::resize( GlutWindow& win ) 
 {
   glViewport( 0,0, win.width(), win.height() );
-  glMatrixMode( GL_PROJECTION );
-  glLoadIdentity(); //Reset the camera
-  gluPerspective( 45., win.width() / double( win.height() ), .5, 300. );
+
+  // deprecated
+  {
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity(); //Reset the camera
+    gluPerspective( 45., win.width() / double( win.height() ), .5, 300. );
+  }
+  _camera->projection()->set_aspect_ratio( win.width() / double( win.height() ) );
+}
+
+shared_ptr< Camera > GlRenderer::camera()
+{
+  return _camera;
+}
+
+shared_ptr< Camera const > GlRenderer::camera() const
+{
+  return _camera;
 }

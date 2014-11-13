@@ -8,7 +8,7 @@ ProjectRootRelative=./
 
 [CMake][CMake Build Directory 0]
 Build Directory Path=file:///home/urp/Documents/cpp-vorlesung2014/audiophile/build
-Build Type=Debug
+Build Type=
 CMake Binary=file:///usr/bin/cmake
 Environment Profile=
 Extra Arguments=
@@ -20,43 +20,46 @@ Path=gcc
 Type=GCC
 
 [Launch]
-Launch Configurations=Launch Configuration 0,Launch Configuration 1
-
-[Launch][Launch Configuration 0]
-Configured Launch Modes=execute
-Configured Launchers=nativeAppLauncher
-Name=audiophile
-Type=Native Application
-
-[Launch][Launch Configuration 0][Data]
-Arguments=
-Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e)
-Dependency Action=Build
-EnvironmentGroup=default
-Executable=optirun
-External Terminal=konsole --noclose --workdir %workdir -e %exe
-Project Target=audiophile,audiophile
-Use External Terminal=false
-Working Directory=
-isExecutable=false
+Launch Configurations=Launch Configuration 1,Launch Configuration 2
 
 [Launch][Launch Configuration 1]
 Configured Launch Modes=execute
 Configured Launchers=nativeAppLauncher
-Name=audiophle (optirun)
+Name=flappy_box (optirun)
 Type=Native Application
 
 [Launch][Launch Configuration 1][Data]
-Arguments=/home/urp/Documents/cpp-vorlesung2014/audiophile/build/audiophile
+Arguments=/home/urp/Documents/cpp-vorlesung2014/audiophile/build/flappy_box
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e)
 Dependency Action=Build
 EnvironmentGroup=default
 Executable=optirun
 External Terminal=konsole --noclose --workdir %workdir -e %exe
-Project Target=audiophile,audiophile
+Project Target=
 Use External Terminal=false
 Working Directory=file:///home/urp/Documents/cpp-vorlesung2014/audiophile/build
 isExecutable=true
+
+[Launch][Launch Configuration 2]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=cg3preview
+Type=Native Application
+
+[Launch][Launch Configuration 2][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x04\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x0c\x00c\x00g\x003\x00.\x001\x005\x00\x00\x00\x12\x00c\x00g\x003\x00c\x00o\x00m\x00m\x00o\x00n\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x0c\x00c\x00g\x003\x00.\x001\x005\x00\x00\x00\x14\x00c\x00g\x003\x00m\x00a\x00n\x00a\x00g\x00e\x00r\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x0c\x00c\x00g\x003\x00.\x001\x005\x00\x00\x00\x18\x00c\x00g\x003\x00p\x00a\x00t\x00h\x00t\x00r\x00a\x00c\x00e\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x14\x00a\x00u\x00d\x00i\x00o\x00p\x00h\x00i\x00l\x00e\x00\x00\x00\x14\x00c\x00g\x003\x00p\x00r\x00e\x00v\x00i\x00e\x00w)
+Dependency Action=Build
+EnvironmentGroup=
+Executable=file:///home/urp/Documents/cpp-vorlesung2014/audiophile/
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=audiophile,cg3preview
+Use External Terminal=false
+Working Directory=
+isExecutable=false
+
+[MakeBuilder]
+Number Of Jobs=5
 
 [Project]
 VersionControlSupport=kdevgit

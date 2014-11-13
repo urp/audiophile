@@ -5,8 +5,6 @@
 # include "view/al_renderer.hpp"
 # include "view/gl_renderer.hpp"
 
-# include <chrono>
-
 namespace flappy_box
 {
   namespace controller 

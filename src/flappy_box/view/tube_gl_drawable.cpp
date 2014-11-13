@@ -2,8 +2,12 @@
 
 # include "flappy_box/model/box.hpp"
 
-# include "view/gl_shader.hpp"
-# include "view/gl_shader_program.hpp"
+# include "view/camera.hpp"
+
+# include "view/gl/utilities.hpp"
+# include "view/gl/shader.hpp"
+# include "view/gl/shader_program.hpp"
+
 
 # include <random>
 
@@ -57,7 +61,7 @@ void TubeGlDrawable::visualize( ::view::GlRenderer& r, ::view::GlutWindow& )
       glTranslated( duration_cast< duration<double> >( _first_timestamp - timestamp ).count(), 0., 0. );
 
       // Draw primitives
-      drawWallSurfaceWithShaders( duration_cast< duration<double> >( timestamp - _first_timestamp ) );
+      drawWallSurfaceWithShaders( duration_cast< duration<double> >( timestamp - _first_timestamp ), r );
       //drawWallPoints();
       drawLines();
 
@@ -79,9 +83,9 @@ void TubeGlDrawable::updateLines( size_t reused_cps, flappy_box::model::Tube::co
 
   lower_vertices.resize( cps.size() );
   upper_vertices.resize( cps.size() );
-  
+
   size_t new_vertex_idx = reused_cps;
-  
+
   for( auto cp_it = it_old_end; cp_it != cps.end(); ++cp_it )
   {
     double x_coord = duration_cast< duration<double> >( cp_it->first - _first_timestamp ).count();
@@ -90,7 +94,7 @@ void TubeGlDrawable::updateLines( size_t reused_cps, flappy_box::model::Tube::co
     upper_vertices[ new_vertex_idx ] = { x_coord, 0., cp_it->second.second };
     new_vertex_idx++;
   }
-  
+
   /// Specify lower and upper line vertices
   glBindBuffer( GL_ARRAY_BUFFER, lineVBOs[0] );
   glBufferData( GL_ARRAY_BUFFER, lower_vertices.size() * 3 * sizeof(double) , lower_vertices.data(), GL_DYNAMIC_DRAW );
@@ -236,18 +240,8 @@ void TubeGlDrawable::drawWallSurface( chrono::duration< double > const& t )
 
   glDisable( GL_LIGHT0 );
   glDisable( GL_LIGHTING );
-  
 }
 
-void exitOnGLError(const char* error_message)
-{
-  const GLenum error_value = glGetError();
-  if( error_value != GL_NO_ERROR)
-  {
-    cerr << error_message << ": errno " << error_value << " " << string( reinterpret_cast< const char*>( gluErrorString( error_value) ) ) << endl;
-    std::abort();
-  }
-}
 
 ShaderProgram setupWallSurfaceShaderProgram()
 {
@@ -292,7 +286,7 @@ struct MaterialBlock
 };
 
 
-void TubeGlDrawable::drawWallSurfaceWithShaders( chrono::duration< double > const& t )
+void TubeGlDrawable::drawWallSurfaceWithShaders( chrono::duration< double > const& t, ::view::GlRenderer const& r )
 {
 
   static ShaderProgram prog = setupWallSurfaceShaderProgram();
@@ -300,10 +294,13 @@ void TubeGlDrawable::drawWallSurfaceWithShaders( chrono::duration< double > cons
   {
     { 
       MatrixBlock mat_block;
-      glGetFloatv( GL_MODELVIEW_MATRIX, mat_block.vm_matrix.data() );
+      mat44_type model_mat = mat44_type::Identity();
+      model_mat(0,3) = duration_cast< duration<double> >( _first_timestamp - r.game_model()->timestamp() ).count();
+      mat_block.vm_matrix = ( r.camera()->view_matrix() * model_mat ).cast< GLfloat >();
+      //glGetFloatv( GL_MODELVIEW_MATRIX, mat_block.vm_matrix.data() );
 
-      Eigen::Matrix< GLfloat, 4, 4 > p_matrix;
-      glGetFloatv( GL_PROJECTION_MATRIX, p_matrix.data() );
+      Eigen::Matrix< GLfloat, 4, 4 > p_matrix = r.camera()->projection()->get_matrix().cast<GLfloat>();
+      //glGetFloatv( GL_PROJECTION_MATRIX, p_matrix.data() );
 
       mat_block.pvm_matrix = p_matrix * mat_block.vm_matrix;
       mat_block.n_matrix = mat_block.vm_matrix/*.block(0,0,3,3)*/.inverse().transpose();

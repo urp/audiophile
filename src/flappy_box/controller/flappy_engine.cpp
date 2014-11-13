@@ -10,18 +10,18 @@
 # include "flappy_box/view/box_al_audible.hpp"
 
 # include "view/glut_window.hpp"
+# include "view/camera.hpp"
 
 # include <AL/alut.h>
 # include <GL/freeglut.h>
 
+using namespace std;
 using namespace ::flappy_box::controller;
 
-static std::function< void () > __current_glut_advance_func = [](){ std::cerr << "Warning: Default function called in __current_glut_advance_func." << std::endl; };
-
-FlappyEngine::FlappyEngine( const std::shared_ptr< ::controller::Logic >& l )
+FlappyEngine::FlappyEngine( const shared_ptr< ::controller::Logic >& l )
 : ::controller::GlutEngine( l )
-, _al_renderer( std::make_shared< ::view::AlRenderer >( game_model() ) )
-, _gl_renderer( std::make_shared< ::view::GlRenderer >( game_model() ) )
+, _al_renderer( make_shared< ::view::AlRenderer >( game_model() ) )
+, _gl_renderer( make_shared< ::view::GlRenderer >( game_model() ) )
 {}
 
 void FlappyEngine::init( int& argc, char** argv )
@@ -30,28 +30,32 @@ void FlappyEngine::init( int& argc, char** argv )
 
   alutInit( &argc, argv );
 
-  auto tube = std::make_shared< model::Tube >();
-  auto box = std::make_shared< model::Box  >( tube );
+  auto tube = make_shared< model::Tube >();
+  auto box = make_shared< model::Box  >( tube );
   tube->setBox( box );
-  
+
   game_model()->addGameObject( tube );
   game_model()->addGameObject( box );
-  
-  game_logic() ->   logic_factory().register_derived_key< model::Box  >( []( std::shared_ptr< model::Box  > const& b ) { return std::make_shared<  BoxObjectLogic >     ( b ); } );
-  game_logic() ->   logic_factory().register_derived_key< model::Tube >( []( std::shared_ptr< model::Tube > const& t ) { return std::make_shared< TubeObjectLogic >     ( t ); } );
 
-  gl_renderer()->drawable_factory().register_derived_key< model::Box  >( []( std::shared_ptr< model::Box  > const& b ) { return std::make_shared< view:: BoxGlDrawable >( b ); } );
-  gl_renderer()->drawable_factory().register_derived_key< model::Tube >( []( std::shared_ptr< model::Tube > const& t ) { return std::make_shared< view::TubeGlDrawable >( t ); } );
+  game_logic() ->   logic_factory().register_derived_key< model::Box  >( []( shared_ptr< model::Box  > const& b ) { return make_shared<  BoxObjectLogic >     ( b ); } );
+  game_logic() ->   logic_factory().register_derived_key< model::Tube >( []( shared_ptr< model::Tube > const& t ) { return make_shared< TubeObjectLogic >     ( t ); } );
 
-  al_renderer()-> audible_factory().register_derived_key< model::Box >( []( std::shared_ptr< model::Box > const& b ) { return std::make_shared< view::BoxAlAudible > ( b ); } );
+  gl_renderer()->drawable_factory().register_derived_key< model::Box  >( []( shared_ptr< model::Box  > const& b ) { return make_shared< view:: BoxGlDrawable >( b ); } );
+  gl_renderer()->drawable_factory().register_derived_key< model::Tube >( []( shared_ptr< model::Tube > const& t ) { return make_shared< view::TubeGlDrawable >( t ); } );
 
+  al_renderer()-> audible_factory().register_derived_key< model::Box >( []( shared_ptr< model::Box > const& b ) { return make_shared< view::BoxAlAudible > ( b ); } );
 }
 
 
 void FlappyEngine::run()
 {
   // Create a window and connect it with a view::GlRenderer and an InputEventHandler.
-  _main_window = std::make_shared< ::view::GlutWindow >( "flappy_box", 500,500, gl_renderer() , shared_from_this() );
+  size_t const win_width  = 500;
+  size_t const win_height = 500;
+  _main_window = make_shared< ::view::GlutWindow >( "flappy_box", win_width,win_height, gl_renderer() , shared_from_this() );
+
+  gl_renderer()->camera()->lookAt( vec3_type( 0,-20,0 ), vec3_type( 0,0,0 ), vec3_type( 0,0,1 ) );
+  gl_renderer()->camera()->set_projection( make_shared< ::view::PerspectiveProjection >( .25*M_PI, 0.,100. , double( win_width )/ win_height ) );
 
   // run game
   GlutEngine::run();
